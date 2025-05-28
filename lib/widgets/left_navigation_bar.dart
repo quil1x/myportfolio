@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'nav_item.dart';
 import 'settings_bottom_sheet.dart';
 import '../localization/strings.dart';
-
+import '../achievement_manager.dart'; // Імпорт для ачівок
 
 class LeftNavigationBar extends StatelessWidget {
   final int selectedIndex;
@@ -54,19 +54,28 @@ class LeftNavigationBar extends StatelessWidget {
             icon: Icons.person_outline,
             titleKey: 'nav_about',
             isSelected: selectedIndex == 0,
-            onTap: () => onItemTapped(0),
+            onTap: () {
+              AchievementManager.show(context, 'view_about'); // Ачівка!
+              onItemTapped(0);
+            },
           ),
           NavItem(
             icon: Icons.construction_outlined,
             titleKey: 'nav_projects',
             isSelected: selectedIndex == 1,
-            onTap: () => onItemTapped(1),
+            onTap: () {
+              AchievementManager.show(context, 'view_projects'); // Ачівка!
+              onItemTapped(1);
+            },
           ),
           NavItem(
             icon: Icons.chat_bubble_outline,
             titleKey: 'nav_contacts',
             isSelected: selectedIndex == 2,
-            onTap: () => onItemTapped(2),
+            onTap: () {
+              AchievementManager.show(context, 'view_contacts'); // Ачівка!
+              onItemTapped(2);
+            },
           ),
 
           const Spacer(),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../localization/strings.dart'; 
-import '../utils.dart';
+import '../utils.dart'; 
+import '../achievement_manager.dart'; // Імпорт!
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -13,7 +14,10 @@ class AboutScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ElevatedButton.icon(
-            onPressed: () => launchURL(context, 'https://classic.minecraft.net/'),
+            onPressed: () {
+              launchURL(context, 'https://classic.minecraft.net/');
+              AchievementManager.show(context, 'play_game'); 
+            },
             icon: const Icon(Icons.play_arrow, size: 30),
             label: Text(tr(context, 'play_button')),
             style: ElevatedButton.styleFrom(
@@ -28,11 +32,7 @@ class AboutScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 50),
-
-          Text(
-            tr(context, 'about_title'), 
-            style: Theme.of(context).textTheme.displaySmall,
-          ),
+          Text(tr(context, 'about_title'), style: Theme.of(context).textTheme.displaySmall,),
           const SizedBox(height: 15),
           Text(
             '${tr(context, 'about_text_p1')}\n\n' 

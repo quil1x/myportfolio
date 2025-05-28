@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme_notifier.dart'; 
 import '../language_notifier.dart';
 import '../localization/strings.dart';
+import '../achievement_manager.dart'; // Імпорт для ачівок
 
 class SettingsBottomSheet extends StatelessWidget {
   const SettingsBottomSheet({super.key});
@@ -39,12 +40,13 @@ class SettingsBottomSheet extends StatelessWidget {
                 value: currentMode == ThemeMode.light, 
                 onChanged: (bool value) {
                   themeNotifier.switchTheme(); 
+                  AchievementManager.show(context, 'switch_theme'); // Ачівка!
                 },
                 secondary: Icon(
-                  currentMode == ThemeMode.light ? Icons.wb_sunny : Icons.nightlight_round,
+                  currentMode == ThemeMode.light ? Icons.wb_sunny_outlined : Icons.nightlight_round_outlined,
                   color: theme.primaryColor,
                   ),
-                activeTrackColor: theme.primaryColor.withAlpha(128), // ⬅️ Змінено!
+                activeTrackColor: theme.primaryColor.withAlpha(128),
                 activeColor: theme.primaryColor,
               );
             },
@@ -55,7 +57,7 @@ class SettingsBottomSheet extends StatelessWidget {
             valueListenable: languageNotifier,
             builder: (_, currentLocale, __) {
               return ListTile(
-                leading: Icon(Icons.language, color: theme.primaryColor),
+                leading: Icon(Icons.translate_outlined, color: theme.primaryColor),
                 title: Text(
                   languageNotifier.switchButtonText,
                   style: theme.textTheme.bodyLarge?.copyWith(fontSize: 10),
@@ -66,6 +68,7 @@ class SettingsBottomSheet extends StatelessWidget {
                 ),
                 onTap: () {
                   languageNotifier.switchLanguage(); 
+                  AchievementManager.show(context, 'switch_language'); // Ачівка!
                 },
               );
             },

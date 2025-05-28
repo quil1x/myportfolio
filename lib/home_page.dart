@@ -3,6 +3,7 @@ import 'widgets/left_navigation_bar.dart';
 import 'screens/about_screen.dart';
 import 'screens/projects_screen.dart';
 import 'screens/contact_screen.dart';
+import 'achievement_manager.dart'; 
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,6 +14,29 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  bool _firstVisitAchievementShown = false; 
+
+  @override
+  void initState() {
+    super.initState();
+    AchievementManager.resetSessionAchievements();
+  }
+
+  @override
+  void didChangeDependencies() { 
+    super.didChangeDependencies();
+    if (!_firstVisitAchievementShown && mounted) {
+      Future.delayed(const Duration(milliseconds: 700), () {
+        if (mounted) {
+           // ⬇️ Викликаємо ачівку БЕЗ ЗВУКУ
+           AchievementManager.show(context, 'first_visit', playSound: false); 
+           setState(() { 
+             _firstVisitAchievementShown = true;
+           });
+        }
+      });
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -44,7 +68,7 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: Container(
-              color: Theme.of(context).scaffoldBackgroundColor, 
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: _getSelectedScreen(),
             ),
           ),

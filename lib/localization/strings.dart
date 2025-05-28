@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../language_notifier.dart';
+import '../language_notifier.dart'; // Переконайся, що цей шлях правильний
 
-
+// Словник з усіма текстами
 const Map<String, Map<String, String>> localizedStrings = {
   'uk': {
     'portfolioTitle': 'Портфоліо Назарія Лучківа',
@@ -18,10 +18,14 @@ const Map<String, Map<String, String>> localizedStrings = {
     'projects_title': 'МОЇ ПРОЄКТИ:',
     'projects_wip_title': 'ЗАПЛАНОВАНО:',
     'projects_wip_tag': '(В РОЗРОБЦІ)',
+    'project_portfolio_title': 'Pixel Portfolio [Minecraft Style]',
+    'project_portfolio_desc': 'Моє портфоліо. Цей сайт зроблено на Flutter та натхненно стилем Minecraft.',
+    'project_portfolio_tech': 'Технології: Flutter Web, Dart',
     'projects_insta_title': 'Instagram UI Clone',
     'projects_insta_desc': 'Клон інтерфейсу популярної соціальної мережі Instagram, створений для практики навичок UI/UX у Flutter.',
     'projects_insta_tech': 'Технології: Flutter, Dart',
     'github_button': 'GitHub',
+    'site_button': 'Сайт',
     'projects_alpha_title': 'Проєкт "Альфа"',
     'projects_alpha_desc': 'Зараз я активно працюю над цією ідеєю. Більше деталей з\'явиться незабаром!',
     'projects_beta_title': 'Проєкт "Бета"',
@@ -37,6 +41,16 @@ const Map<String, Map<String, String>> localizedStrings = {
     'settings_lang_switch': 'Переключити на English',
     'settings_lang_current': 'Поточна мова:',
     'error_launch': 'Не вдалося відкрити',
+    // Нові ачівки
+    'ach_get_title': 'Досягнення здобуто!',
+    'ach_first_visit_desc': 'Дослідник Портфоліо!',
+    'ach_play_game_desc': 'Час для гри!',
+    'ach_view_about_desc': 'Знайомство відбулося!',
+    'ach_view_projects_desc': 'Майстер Проєктів',
+    'ach_view_contacts_desc': 'На Зв\'язку!',
+    'ach_open_github_repo_desc': 'Дослідник Коду!',
+    'ach_switch_theme_desc': 'Володар Світла і Темряви!',
+    'ach_switch_language_desc': 'Поліглот!',
   },
   'en': {
     'portfolioTitle': 'Nazariy Luchkiv Portfolio',
@@ -53,10 +67,14 @@ const Map<String, Map<String, String>> localizedStrings = {
     'projects_title': 'MY PROJECTS:',
     'projects_wip_title': 'PLANNED:',
     'projects_wip_tag': '(IN PROGRESS)',
+    'project_portfolio_title': 'Pixel Portfolio [Minecraft Style]',
+    'project_portfolio_desc': 'My portfolio. This site was built with Flutter and inspired by the Minecraft style.',
+    'project_portfolio_tech': 'Technologies: Flutter Web, Dart',
     'projects_insta_title': 'Instagram UI Clone',
     'projects_insta_desc': 'A clone of the popular social network Instagram\'s interface, created to practice UI/UX skills in Flutter.',
     'projects_insta_tech': 'Technologies: Flutter, Dart',
     'github_button': 'GitHub',
+    'site_button': 'Website',
     'projects_alpha_title': 'Project "Alpha"',
     'projects_alpha_desc': 'I am currently actively working on this idea. More details will appear soon!',
     'projects_beta_title': 'Project "Beta"',
@@ -72,10 +90,20 @@ const Map<String, Map<String, String>> localizedStrings = {
     'settings_lang_switch': 'Switch to Ukrainian',
     'settings_lang_current': 'Current language:',
     'error_launch': 'Could not launch',
+    // New achievements
+    'ach_get_title': 'Achievement get!',
+    'ach_first_visit_desc': 'Portfolio Explorer!',
+    'ach_play_game_desc': 'Time to Play!',
+    'ach_view_about_desc': 'Met the Creator!',
+    'ach_view_projects_desc': 'Project Artisan',
+    'ach_view_contacts_desc': 'Made Contact!',
+    'ach_open_github_repo_desc': 'Code Explorer!',
+    'ach_switch_theme_desc': 'Master of Light & Shadow!',
+    'ach_switch_language_desc': 'Polyglot!',
   },
 };
 
-
+// Функція-перекладач
 String tr(BuildContext context, String key) {
   final locale = languageNotifier.value;
   return localizedStrings[locale.languageCode]?[key] ?? key;
