@@ -1,0 +1,39 @@
+name: Deploy Flutter Web to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Або та гілка, з якої ти хочеш публікувати (наприклад, master)
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Дозвіл на запис, щоб створити/оновити гілку gh-pages
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4 # Бере твій код з репозиторію
+
+      - name: Setup Flutter 🐦
+        uses: subosito/flutter-action@v2 # Налаштовує Flutter
+        with:
+          channel: 'stable' # Або 'beta', 'dev', залежно від твоїх потреб
+
+      - name: Install dependencies 📦
+        run: flutter pub get # Встановлює залежності з pubspec.yaml
+
+      - name: Build web app 🏗️
+        # Важливо: /myportfolio/ - це назва твого репозиторію!
+        run: flutter build web --release --base-href /myportfolio/
+
+      - name: Deploy to GitHub Pages 🚀
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # Спеціальний токен для доступу
+          publish_dir: ./build/web # Папка, яку публікуємо
+          # За замовчуванням публікує у гілку gh-pages
+          # Можна вказати іншу гілку, якщо потрібно:
+          # publish_branch: gh-pages
+          # Можна примусово перезаписувати історію гілки gh-pages:
+          # force_orphan: true
