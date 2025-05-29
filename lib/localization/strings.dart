@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../language_notifier.dart'; // Переконайся, що цей шлях правильний
+import '../language_notifier.dart';
 
-// Словник з усіма текстами
 const Map<String, Map<String, String>> localizedStrings = {
   'uk': {
     'portfolioTitle': 'Портфоліо Назарія Лучківа',
@@ -37,11 +36,11 @@ const Map<String, Map<String, String>> localizedStrings = {
     'contact_instagram': 'Instagram',
     'contact_email': 'Email',
     'settings_title': 'НАЛАШТУВАННЯ',
-    'settings_theme_light': 'Світла тема',
+    'settings_theme_switch_to_dark': 'Перемкнути на темну тему',
+    'settings_theme_switch_to_light': 'Перемкнути на світлу тему',
     'settings_lang_switch': 'Переключити на English',
     'settings_lang_current': 'Поточна мова:',
     'error_launch': 'Не вдалося відкрити',
-    // Нові ачівки
     'ach_get_title': 'Досягнення здобуто!',
     'ach_first_visit_desc': 'Дослідник Портфоліо!',
     'ach_play_game_desc': 'Час для гри!',
@@ -51,6 +50,12 @@ const Map<String, Map<String, String>> localizedStrings = {
     'ach_open_github_repo_desc': 'Дослідник Коду!',
     'ach_switch_theme_desc': 'Володар Світла і Темряви!',
     'ach_switch_language_desc': 'Поліглот!',
+    'ach_survived_creeper_desc': 'Та ти везунчик!',
+    'you_died_text': 'ВИ ЗАГИНУЛИ!',
+    'respawn_button_text': 'ВІДРОДИТИСЯ',
+    'title_screen_button_text': 'ГОЛОВНЕ МЕНЮ',
+    'score_text': 'Рахунок: ',
+    'xp_label': 'Досвід:',
   },
   'en': {
     'portfolioTitle': 'Nazariy Luchkiv Portfolio',
@@ -86,11 +91,11 @@ const Map<String, Map<String, String>> localizedStrings = {
     'contact_instagram': 'Instagram',
     'contact_email': 'Email',
     'settings_title': 'SETTINGS',
-    'settings_theme_light': 'Light Theme',
+    'settings_theme_switch_to_dark': 'Switch to Dark Theme',
+    'settings_theme_switch_to_light': 'Switch to Light Theme',
     'settings_lang_switch': 'Switch to Ukrainian',
     'settings_lang_current': 'Current language:',
     'error_launch': 'Could not launch',
-    // New achievements
     'ach_get_title': 'Achievement get!',
     'ach_first_visit_desc': 'Portfolio Explorer!',
     'ach_play_game_desc': 'Time to Play!',
@@ -100,10 +105,15 @@ const Map<String, Map<String, String>> localizedStrings = {
     'ach_open_github_repo_desc': 'Code Explorer!',
     'ach_switch_theme_desc': 'Master of Light & Shadow!',
     'ach_switch_language_desc': 'Polyglot!',
+    'ach_survived_creeper_desc': 'Lucky You!',
+    'you_died_text': 'YOU DIED!',
+    'respawn_button_text': 'RESPAWN',
+    'title_screen_button_text': 'TITLE SCREEN',
+    'score_text': 'Score: ',
+    'xp_label': 'Experience:',
   },
 };
 
-// Функція-перекладач
 String tr(BuildContext context, String key) {
   final locale = languageNotifier.value;
   return localizedStrings[locale.languageCode]?[key] ?? key;

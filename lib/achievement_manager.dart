@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'widgets/achievement_toast.dart';
+import 'xp_notifier.dart'; // Переконайся, що цей імпорт є
 
 class AchievementManager {
   static final Set<String> _unlockedInSession = {};
@@ -11,17 +12,17 @@ class AchievementManager {
   static bool _audioPlayerListenersAdded = false;
   static void _setupAudioPlayerListeners() {
     if (_audioPlayerListenersAdded) return;
-    _audioPlayer.onPlayerStateChanged.listen((PlayerState s) {
-      print('[AchievementManager] AudioPlayer State: $s');
-    }, onError: (msg) {
-      print('[AchievementManager] AudioPlayer State Error: $msg');
-    });
-    _audioPlayer.onLog.listen((String msg) {
-       print('[AchievementManager] AudioPlayer Log: $msg');
-    }, onError: (msg) {
-        print('[AchievementManager] AudioPlayer Log Error: $msg');
-    });
     _audioPlayerListenersAdded = true;
+    // _audioPlayer.onPlayerStateChanged.listen((PlayerState s) {
+    //   print('[AchievementManager] AudioPlayer State: $s');
+    // }, onError: (msg) {
+    //   print('[AchievementManager] AudioPlayer State Error: $msg');
+    // });
+    // _audioPlayer.onLog.listen((String msg) {
+    //    print('[AchievementManager] AudioPlayer Log: $msg');
+    // }, onError: (msg) {
+    //     print('[AchievementManager] AudioPlayer Log Error: $msg');
+    // });
   }
 
   static final Map<String, ({IconData icon, String titleKey, String descriptionKey})> _achievementsData = {
@@ -33,30 +34,38 @@ class AchievementManager {
     'open_github_repo': (icon: Icons.code_outlined, titleKey: 'ach_get_title', descriptionKey: 'ach_open_github_repo_desc'),
     'switch_theme': (icon: Icons.brightness_6_outlined, titleKey: 'ach_get_title', descriptionKey: 'ach_switch_theme_desc'),
     'switch_language': (icon: Icons.translate_outlined, titleKey: 'ach_get_title', descriptionKey: 'ach_switch_language_desc'),
+    'survived_creeper': (icon: Icons.shield_outlined, titleKey: 'ach_get_title', descriptionKey: 'ach_survived_creeper_desc'),
   };
 
-  // ⬇️ Додано параметр playSound, за замовчуванням true
-  static void show(BuildContext context, String achievementId, {bool playSound = true}) {
+  static bool isCreeperEffectActive = false; 
+  static void setCreeperEffectStatus(bool isActive) {
+    isCreeperEffectActive = isActive;
+  }
+
+  static void show(BuildContext context, String achievementId) {
     _setupAudioPlayerListeners(); 
 
     if (_unlockedInSession.contains(achievementId) || !_achievementsData.containsKey(achievementId)) {
       return;
     }
-    _unlockedInSession.add(achievementId);
+    if (isCreeperEffectActive && achievementId != 'survived_creeper') return;
 
+    _unlockedInSession.add(achievementId);
+    // Додаємо XP, тільки якщо це не ачівка за виживання після кріпера,
+    // бо XP скидається при смерті.
+    if (achievementId != 'survived_creeper') {
+      xpNotifier.addXp(); 
+    }
+    
     final achievementData = _achievementsData[achievementId]!;
 
-    if (playSound) { // ⬅️ Відтворюємо звук тільки якщо playSound = true
+    bool shouldPlayAchievementSound = achievementId != 'survived_creeper' && achievementId != 'first_visit';
+
+    if (shouldPlayAchievementSound) {
       final String soundPath = 'audio/minecraft-rare-achievement.mp3';
-      print('[AchievementManager] Attempting to play sound: $soundPath');
-      
-      _audioPlayer.play(AssetSource(soundPath)).then((_) {
-        print('[AchievementManager] Audio playback initiated via play(AssetSource).');
-      }).catchError((error) {
-        print('[AchievementManager] Error initiating audio playback: $error');
+      _audioPlayer.play(AssetSource(soundPath)).catchError((error) {
+        // print('[AchievementManager] Error initiating achievement sound for "$achievementId": $error');
       });
-    } else {
-      print('[AchievementManager] Sound playback skipped for achievement: $achievementId');
     }
 
     _overlayEntry?.remove();

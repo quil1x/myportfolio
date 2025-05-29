@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../localization/strings.dart'; // Для перекладу
+import '../localization/strings.dart'; 
 
 class AchievementToast extends StatelessWidget {
   final IconData icon;
@@ -24,7 +24,7 @@ class AchievementToast extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: theme.cardColor.withOpacity(0.85),
+          color: theme.cardColor.withAlpha((0.85 * 255).round()), // ⬅️ Змінено!
           borderRadius: BorderRadius.circular(4.0),
           border: Border.all(
             color: theme.brightness == Brightness.dark ? Colors.black54 : Colors.grey.shade400,
@@ -32,7 +32,7 @@ class AchievementToast extends StatelessWidget {
           ),
            boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withAlpha((0.2 * 255).round()), // ⬅️ Змінено!
               blurRadius: 8,
               offset: const Offset(0, 4),
             )
@@ -62,7 +62,7 @@ class AchievementToast extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'PressStart2P',
                     fontSize: 9,
-                    color: textColor.withOpacity(0.8),
+                    color: textColor.withAlpha((0.8 * 255).round()), // ⬅️ Змінено!
                   ),
                 ),
               ],

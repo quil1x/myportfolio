@@ -4,7 +4,8 @@ import 'screens/about_screen.dart';
 import 'screens/projects_screen.dart';
 import 'screens/contact_screen.dart';
 import 'achievement_manager.dart'; 
-import 'localization/strings.dart'; // Для заголовка AppBar
+import 'localization/strings.dart';
+import 'widgets/xp_bar_widget.dart'; // ⬅️ Імпортуємо нашу шкалу XP!
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -38,7 +39,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Ця функція оновлює вибраний індекс
   void _updateSelectedIndex(int index) {
     setState(() {
       _selectedIndex = index;
@@ -58,57 +58,67 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // Отримуємо ширину екрана
-    final double screenWidth = MediaQuery.of(context).size.width;
-    // Визначаємо "точку зламу" - ширину, при якій макет змінюється
-    const double breakpoint = 768.0; // Можеш підібрати інше значення
-
-    if (screenWidth < breakpoint) {
-      // --- МОБІЛЬНИЙ МАКЕТ ---
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(tr(context, 'portfolioTitle')), // Використовуємо перекладений заголовок
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor, // Колір з теми
-          centerTitle: true, // Центруємо заголовок
-        ),
-        // Бічне меню, що висувається
-        drawer: Drawer(
-          backgroundColor: Theme.of(context).brightness == Brightness.dark 
-              ? const Color(0xFF2D2D2D) 
-              : Colors.grey[200], // Колір фону Drawer
-          child: LeftNavigationBar(
+  // Нова функція для побудови основного контенту, щоб уникнути дублювання
+  Widget _buildMainContentArea(bool isDesktop) {
+    if (isDesktop) {
+      return Row(
+        children: <Widget>[
+          LeftNavigationBar(
             selectedIndex: _selectedIndex,
             onItemTapped: (index) {
               _updateSelectedIndex(index);
-              Navigator.of(context).pop(); // Закриваємо Drawer після вибору
             },
           ),
-        ),
-        // Основний контент займає весь екран
-        body: _getSelectedScreen(),
+          Expanded(
+            child: Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: _getSelectedScreen(),
+            ),
+          ),
+        ],
       );
     } else {
-      // --- ДЕСКТОПНИЙ МАКЕТ (як було раніше) ---
-      return Scaffold(
-        body: Row(
-          children: <Widget>[
-            LeftNavigationBar(
-              selectedIndex: _selectedIndex,
-              onItemTapped: (index) { // Просто оновлюємо індекс для десктопу
-                _updateSelectedIndex(index);
-              },
+      // Для мобільного, AppBar та Drawer керуються Scaffold вище
+      return _getSelectedScreen();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    const double breakpoint = 768.0; 
+    bool isDesktop = screenWidth >= breakpoint;
+
+    return Scaffold(
+      appBar: isDesktop 
+          ? null // Немає AppBar на десктопі
+          : AppBar(
+              title: Text(tr(context, 'portfolioTitle')),
+              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+              centerTitle: true,
             ),
-            Expanded(
-              child: Container(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                child: _getSelectedScreen(),
+      drawer: isDesktop 
+          ? null // Немає Drawer на десктопі
+          : Drawer(
+              backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                  ? const Color(0xFF2D2D2D) 
+                  : Colors.grey[200],
+              child: LeftNavigationBar(
+                selectedIndex: _selectedIndex,
+                onItemTapped: (index) {
+                  _updateSelectedIndex(index);
+                  Navigator.of(context).pop(); 
+                },
               ),
             ),
-          ],
-        ),
-      );
-    }
+      body: Column( // ⬅️ Головний контент тепер у Column
+        children: [
+          Expanded(
+            child: _buildMainContentArea(isDesktop), // ⬅️ Основна частина
+          ),
+          const XpBarWidget(), // ⬅️ Наша шкала досвіду ВНИЗУ!
+        ],
+      ),
+    );
   }
 }

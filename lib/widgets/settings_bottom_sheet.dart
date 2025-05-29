@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme_notifier.dart'; 
 import '../language_notifier.dart';
 import '../localization/strings.dart';
-import '../achievement_manager.dart'; // Імпорт для ачівок
+import '../achievement_manager.dart';
 
 class SettingsBottomSheet extends StatelessWidget {
   const SettingsBottomSheet({super.key});
@@ -32,22 +32,20 @@ class SettingsBottomSheet extends StatelessWidget {
           ValueListenableBuilder<ThemeMode>(
             valueListenable: themeNotifier,
             builder: (_, currentMode, __) {
-              return SwitchListTile(
+              bool isLightMode = currentMode == ThemeMode.light;
+              return ListTile(
+                leading: Icon(
+                  isLightMode ? Icons.nightlight_round_outlined : Icons.wb_sunny_outlined,
+                  color: theme.primaryColor,
+                ),
                 title: Text(
-                  tr(context, 'settings_theme_light'),
+                  isLightMode ? tr(context, 'settings_theme_switch_to_dark') : tr(context, 'settings_theme_switch_to_light'),
                   style: theme.textTheme.bodyLarge?.copyWith(fontSize: 10),
                 ),
-                value: currentMode == ThemeMode.light, 
-                onChanged: (bool value) {
+                onTap: () {
                   themeNotifier.switchTheme(); 
-                  AchievementManager.show(context, 'switch_theme'); // Ачівка!
+                  AchievementManager.show(context, 'switch_theme');
                 },
-                secondary: Icon(
-                  currentMode == ThemeMode.light ? Icons.wb_sunny_outlined : Icons.nightlight_round_outlined,
-                  color: theme.primaryColor,
-                  ),
-                activeTrackColor: theme.primaryColor.withAlpha(128),
-                activeColor: theme.primaryColor,
               );
             },
           ),
@@ -68,7 +66,7 @@ class SettingsBottomSheet extends StatelessWidget {
                 ),
                 onTap: () {
                   languageNotifier.switchLanguage(); 
-                  AchievementManager.show(context, 'switch_language'); // Ачівка!
+                  AchievementManager.show(context, 'switch_language');
                 },
               );
             },
