@@ -5,7 +5,7 @@ import '../language_notifier.dart'; // <-- ДОДАЙ ЦЕЙ ІМПОРТ
 
 class ContactScreen extends StatelessWidget {
   // const ContactScreen({super.key});
-  const ContactScreen({Key? key}) : super(key: key); // Дозволяє передавати ключ
+  const ContactScreen({super.key}); // Дозволяє передавати ключ
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +72,7 @@ class ContactScreen extends StatelessWidget {
       icon: Icon(icon, size: 18),
       label: Text(tr(context, labelKey)),
       style: Theme.of(context).elevatedButtonTheme.style?.copyWith(
-            minimumSize: MaterialStateProperty.all(const Size(250, 60)),
+            minimumSize: WidgetStateProperty.all(const Size(250, 60)),
             alignment: Alignment.centerLeft,
           ),
     );

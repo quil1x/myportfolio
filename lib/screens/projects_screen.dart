@@ -7,7 +7,7 @@ class ProjectsScreen extends StatelessWidget {
   // Якщо ти плануєш використовувати ValueKey, як ми обговорювали,
   // то розкоментуй наступний рядок і конструктор:
   // const ProjectsScreen({super.key});
-  const ProjectsScreen({Key? key}) : super(key: key); // Дозволяє передавати ключ
+  const ProjectsScreen({super.key}); // Дозволяє передавати ключ
 
   @override
   Widget build(BuildContext context) {

@@ -34,10 +34,7 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
   }
 
   void _triggerCreeperExplosion(BuildContext context) {
-    // Перевіряємо, чи активний ефект кріпера або чи вже існує оверлей кріпера
-    // (також прибрали перевірку на _portalOverlayEntry, бо його більше немає тут)
     if (AchievementManager.isCreeperEffectActive || _creeperOverlayEntry != null) return;
-
     _creeperOverlayEntry = OverlayEntry(
       builder: (context) => CreeperExplosionEffect(
         onEffectComplete: () {
@@ -50,39 +47,91 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
   }
 
   void _handlePlayerNameTap(BuildContext context) {
-    setState(() {
-      _playerNameTapCount++;
-    });
+    setState(() { _playerNameTapCount++; });
     if (_playerNameTapCount >= 3) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Color(0xFF5E2612),
-          content: Text(
-            'ЯƎHTƎN',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontFamily: 'PressStart2P', fontSize: 14, color: Color(0xFFFF7700)),
-          ),
+          content: Text('ЯƎHTƎN', textAlign: TextAlign.center, style: TextStyle(fontFamily: 'PressStart2P', fontSize: 14, color: Color(0xFFFF7700))),
           duration: Duration(seconds: 2),
         ),
       );
-      setState(() {
-        _playerNameTapCount = 0;
-      });
+      setState(() { _playerNameTapCount = 0; });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final currentAppThemeMode = themeNotifier.value;
-    bool isNetherThemeActive = currentAppThemeMode == AppThemeMode.nether;
+    final currentAppMode = themeNotifier.value;
+    bool isNetherThemeActive = currentAppMode == AppThemeMode.nether;
+
+    double navBarOpacity = 0.85;
+    Color navBarColor;
+    if (theme.brightness == Brightness.dark && !isNetherThemeActive) {
+      navBarColor = const Color(0xFF2D2D2D).withAlpha((navBarOpacity * 255).round());
+    } else if (isNetherThemeActive) {
+      navBarColor = theme.cardColor.withAlpha((navBarOpacity * 230).round());
+    } else {
+      navBarColor = (Colors.grey[200] ?? Colors.grey.shade200).withAlpha((navBarOpacity * 255).round());
+    }
+
+    List<Widget> navItems = [];
+
+    navItems.add(
+      NavItem(
+        icon: Icons.person_outline,
+        titleKey: isNetherThemeActive ? 'nav_about_nether' : 'nav_about',
+        isSelected: widget.selectedIndex == 0,
+        onTap: () => widget.onItemTapped(0),
+      ),
+    );
+
+    if (!isNetherThemeActive) {
+      navItems.add(
+        NavItem(
+          icon: Icons.construction_outlined,
+          titleKey: 'nav_projects',
+          isSelected: widget.selectedIndex == 1,
+          onTap: () => widget.onItemTapped(1),
+        ),
+      );
+      navItems.add(
+        NavItem(
+          icon: Icons.chat_bubble_outline,
+          titleKey: 'nav_contacts',
+          isSelected: widget.selectedIndex == 2,
+          onTap: () => widget.onItemTapped(2),
+        ),
+      );
+    } else {
+      navItems.add(
+        NavItem(
+          icon: Icons.explore_outlined, 
+          titleKey: 'nav_nether_details',
+          isSelected: widget.selectedIndex == 2,
+          onTap: () => widget.onItemTapped(2),
+        ),
+      );
+    }
+
+    // Додаємо Вікі як останній пункт основного меню (індекс 3)
+    navItems.add(
+      NavItem(
+        icon: Icons.menu_book_outlined, 
+        titleKey: 'nav_wiki',           
+        isSelected: widget.selectedIndex == 3, // Новий індекс
+        onTap: () {
+          // AchievementManager.show(context, 'used_wiki'); // Можна додати ачівку
+          widget.onItemTapped(3); // Новий індекс
+        },
+      ),
+    );
 
     return Container(
       width: 260,
-      color: theme.brightness == Brightness.dark && !isNetherThemeActive
-              ? const Color(0xFF2D2D2D)
-              : (isNetherThemeActive ? theme.cardColor.withAlpha(230) : Colors.grey[200]),
+      color: navBarColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -104,34 +153,7 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
             ),
           ),
           Divider(color: theme.dividerColor, height: 1),
-          NavItem(
-            icon: Icons.person_outline,
-            titleKey: isNetherThemeActive ? 'nav_about_nether' : 'nav_about', // Динамічна назва
-            isSelected: widget.selectedIndex == 0,
-            onTap: () {
-              AchievementManager.show(context, 'view_about');
-              widget.onItemTapped(0);
-            },
-          ),
-          NavItem(
-            icon: Icons.construction_outlined,
-            titleKey: 'nav_projects',
-            isSelected: widget.selectedIndex == 1,
-            onTap: () {
-              AchievementManager.show(context, 'view_projects');
-              widget.onItemTapped(1);
-            },
-          ),
-          NavItem(
-            icon: Icons.chat_bubble_outline,
-            titleKey: 'nav_contacts',
-            isSelected: widget.selectedIndex == 2,
-            onTap: () {
-              AchievementManager.show(context, 'view_contacts');
-              widget.onItemTapped(2);
-            },
-          ),
-          // NavItem для Незера було видалено звідси
+          ...navItems,
           const Spacer(),
           Divider(color: theme.dividerColor, height: 1),
           Material(
