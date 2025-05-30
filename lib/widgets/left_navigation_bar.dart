@@ -4,7 +4,6 @@ import 'settings_bottom_sheet.dart';
 import '../localization/strings.dart';
 import '../achievement_manager.dart';
 import 'creeper_explosion_effect.dart';
-import 'portal_animation_overlay.dart';
 import '../theme_notifier.dart';
 
 class LeftNavigationBar extends StatefulWidget {
@@ -23,13 +22,11 @@ class LeftNavigationBar extends StatefulWidget {
 
 class _LeftNavigationBarState extends State<LeftNavigationBar> {
   OverlayEntry? _creeperOverlayEntry;
-  OverlayEntry? _portalOverlayEntry;
   int _playerNameTapCount = 0;
 
   void _showSettingsPanel(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      // Прибираємо backgroundColor: Colors.transparent, щоб фон брався з теми
       builder: (BuildContext context) {
         return const SettingsBottomSheet();
       },
@@ -37,7 +34,9 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
   }
 
   void _triggerCreeperExplosion(BuildContext context) {
-    if (AchievementManager.isCreeperEffectActive || _creeperOverlayEntry != null || _portalOverlayEntry != null) return;
+    // Перевіряємо, чи активний ефект кріпера або чи вже існує оверлей кріпера
+    // (також прибрали перевірку на _portalOverlayEntry, бо його більше немає тут)
+    if (AchievementManager.isCreeperEffectActive || _creeperOverlayEntry != null) return;
 
     _creeperOverlayEntry = OverlayEntry(
       builder: (context) => CreeperExplosionEffect(
@@ -51,36 +50,26 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
   }
 
   void _handlePlayerNameTap(BuildContext context) {
-    setState(() { _playerNameTapCount++; });
+    setState(() {
+      _playerNameTapCount++;
+    });
     if (_playerNameTapCount >= 3) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: const Color(0xFF5E2612),
-          content: const Text(
+        const SnackBar(
+          backgroundColor: Color(0xFF5E2612),
+          content: Text(
             'ЯƎHTƎN',
             textAlign: TextAlign.center,
             style: TextStyle(fontFamily: 'PressStart2P', fontSize: 14, color: Color(0xFFFF7700)),
           ),
-          duration: const Duration(seconds: 2),
+          duration: Duration(seconds: 2),
         ),
       );
-      setState(() { _playerNameTapCount = 0; });
+      setState(() {
+        _playerNameTapCount = 0;
+      });
     }
-  }
-
-  void _openNetherPortal(BuildContext context) {
-    if (AchievementManager.isCreeperEffectActive || _portalOverlayEntry != null || _creeperOverlayEntry != null) return;
-
-    _portalOverlayEntry = OverlayEntry(
-      builder: (context) => PortalAnimationOverlay(
-        onComplete: () {
-          _portalOverlayEntry?.remove();
-          _portalOverlayEntry = null;
-        },
-      ),
-    );
-    Overlay.of(context).insert(_portalOverlayEntry!);
   }
 
   @override
@@ -117,7 +106,7 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
           Divider(color: theme.dividerColor, height: 1),
           NavItem(
             icon: Icons.person_outline,
-            titleKey: 'nav_about',
+            titleKey: isNetherThemeActive ? 'nav_about_nether' : 'nav_about', // Динамічна назва
             isSelected: widget.selectedIndex == 0,
             onTap: () {
               AchievementManager.show(context, 'view_about');
@@ -142,18 +131,7 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
               widget.onItemTapped(2);
             },
           ),
-          NavItem(
-            icon: isNetherThemeActive ? Icons.door_back_door_outlined : Icons.whatshot_outlined,
-            titleKey: 'nav_nether_portal',
-            isSelected: isNetherThemeActive,
-            onTap: () {
-              if (isNetherThemeActive) {
-                themeNotifier.cycleThemeSetting();
-              } else {
-                _openNetherPortal(context);
-              }
-            },
-          ),
+          // NavItem для Незера було видалено звідси
           const Spacer(),
           Divider(color: theme.dividerColor, height: 1),
           Material(

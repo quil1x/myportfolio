@@ -3,12 +3,12 @@ import 'widgets/left_navigation_bar.dart';
 import 'screens/about_screen.dart';
 import 'screens/projects_screen.dart';
 import 'screens/contact_screen.dart';
-import 'achievement_manager.dart'; 
+import 'achievement_manager.dart';
 import 'localization/strings.dart';
-import 'widgets/xp_bar_widget.dart'; 
+import 'widgets/xp_bar_widget.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key}); 
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  bool _firstVisitAchievementShown = false; 
+  bool _firstVisitAchievementShown = false;
 
   @override
   void initState() {
@@ -24,13 +24,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void didChangeDependencies() { 
+  void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_firstVisitAchievementShown && mounted) {
       Future.delayed(const Duration(milliseconds: 700), () {
         if (mounted) {
-           AchievementManager.show(context, 'first_visit'); 
-           _firstVisitAchievementShown = true; 
+           AchievementManager.show(context, 'first_visit');
+           _firstVisitAchievementShown = true;
         }
       });
     }
@@ -43,25 +43,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _getSelectedScreen() {
-    // ⬇️ ДІАГНОСТИЧНИЙ PRINT ⬇️
-    print('[DEBUG HomePage _getSelectedScreen] Selected index: $_selectedIndex, building new screen instance.');
+    // print('[DEBUG HomePage _getSelectedScreen] Selected index: $_selectedIndex, building new screen instance.');
     switch (_selectedIndex) {
       case 0:
-        return AboutScreen(); // ⬅️ НЕМАЄ CONST!
+        return const AboutScreen();
       case 1:
-        return ProjectsScreen(); // ⬅️ НЕМАЄ CONST!
+        return const ProjectsScreen();
       case 2:
-        return ContactScreen(); // ⬅️ НЕМАЄ CONST!
+        return const ContactScreen();
       default:
-        return AboutScreen(); // ⬅️ НЕМАЄ CONST!
+        return const AboutScreen();
     }
   }
 
   Widget _buildMainContentArea(bool isDesktop) {
     if (isDesktop) {
       return Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch, // <--- ВИПРАВЛЕННЯ ТУТ
         children: <Widget>[
-          LeftNavigationBar( 
+          LeftNavigationBar(
             selectedIndex: _selectedIndex,
             onItemTapped: (index) {
               _updateSelectedIndex(index);
@@ -69,6 +69,7 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: Container(
+              padding: const EdgeInsets.all(16.0), // Відступ, який ти просив
               color: Theme.of(context).scaffoldBackgroundColor,
               child: _getSelectedScreen(),
             ),
@@ -76,39 +77,44 @@ class _HomePageState extends State<HomePage> {
         ],
       );
     } else {
-      return _getSelectedScreen();
+      // Для мобільної версії можна додати Padding аналогічно, якщо там теж є проблеми
+      // Або залишити як є, якщо там все гаразд.
+      // Наприклад, можна додати менший відступ для мобільних:
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: _getSelectedScreen(),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    const double breakpoint = 768.0; 
+    const double breakpoint = 768.0;
     bool isDesktop = screenWidth >= breakpoint;
-    
-    // ⬇️ ДІАГНОСТИЧНИЙ PRINT ⬇️
-    print('[DEBUG HomePage build] Building HomePage. isDesktop: $isDesktop. Current locale from context: ${Localizations.localeOf(context).languageCode}');
+
+    // print('[DEBUG HomePage build] Building HomePage. isDesktop: $isDesktop. Current locale from context: ${Localizations.localeOf(context).languageCode}');
 
     return Scaffold(
-      appBar: isDesktop 
-          ? null 
+      appBar: isDesktop
+          ? null
           : AppBar(
               title: Text(tr(context, 'portfolioTitle')),
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
               centerTitle: true,
               iconTheme: Theme.of(context).appBarTheme.iconTheme,
             ),
-      drawer: isDesktop 
-          ? null 
+      drawer: isDesktop
+          ? null
           : Drawer(
-              backgroundColor: Theme.of(context).brightness == Brightness.dark 
-                  ? const Color(0xFF2D2D2D) 
+              backgroundColor: Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFF2D2D2D)
                   : Colors.grey[200],
               child: LeftNavigationBar(
                 selectedIndex: _selectedIndex,
                 onItemTapped: (index) {
                   _updateSelectedIndex(index);
-                  Navigator.of(context).pop(); 
+                  Navigator.of(context).pop();
                 },
               ),
             ),
@@ -117,7 +123,7 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: _buildMainContentArea(isDesktop),
           ),
-          const XpBarWidget(), 
+          const XpBarWidget(),
         ],
       ),
     );
