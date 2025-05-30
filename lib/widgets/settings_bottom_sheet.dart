@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme_notifier.dart'; 
+import '../theme_notifier.dart'; // Переконайся, що імпортується AppThemeMode звідси
 import '../language_notifier.dart';
 import '../localization/strings.dart';
 import '../achievement_manager.dart';
@@ -29,21 +29,21 @@ class SettingsBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          ValueListenableBuilder<ThemeMode>(
+          // --- Оновлений Перемикач теми ---
+          ValueListenableBuilder<AppThemeMode>( // ⬅️ Змінено на AppThemeMode!
             valueListenable: themeNotifier,
-            builder: (_, currentMode, __) {
-              bool isLightMode = currentMode == ThemeMode.light;
+            builder: (_, currentAppMode, __) { // currentAppMode тепер типу AppThemeMode
               return ListTile(
                 leading: Icon(
-                  isLightMode ? Icons.nightlight_round_outlined : Icons.wb_sunny_outlined,
+                  themeNotifier.currentThemeIcon, // Використовуємо геттер з themeNotifier
                   color: theme.primaryColor,
                 ),
                 title: Text(
-                  isLightMode ? tr(context, 'settings_theme_switch_to_dark') : tr(context, 'settings_theme_switch_to_light'),
+                  tr(context, themeNotifier.currentThemeSwitchTextKey), // Використовуємо геттер з themeNotifier
                   style: theme.textTheme.bodyLarge?.copyWith(fontSize: 10),
                 ),
                 onTap: () {
-                  themeNotifier.switchTheme(); 
+                  themeNotifier.cycleThemeSetting(); // ⬅️ Викликаємо правильний метод!
                   AchievementManager.show(context, 'switch_theme');
                 },
               );
@@ -51,6 +51,7 @@ class SettingsBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 10),
 
+          // --- Перемикач мови (залишається як є) ---
           ValueListenableBuilder<Locale>(
             valueListenable: languageNotifier,
             builder: (_, currentLocale, __) {

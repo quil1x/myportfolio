@@ -7,6 +7,7 @@ import 'package:web/web.dart' as web;
 import '../localization/strings.dart';
 import '../achievement_manager.dart';
 import '../xp_notifier.dart'; 
+// import './xp_bar_widget.dart'; // ⬅️ Цей імпорт був непотрібним, бо XP бар тут не показується
 import 'package:google_fonts/google_fonts.dart';
 
 enum ExplosionStage { idling, hissing, exploding, youDied }
@@ -20,7 +21,7 @@ class CreeperExplosionEffect extends StatefulWidget {
   State<CreeperExplosionEffect> createState() => _CreeperExplosionEffectState();
 }
 
-class _Particle { // Залишається без змін
+class _Particle { 
   double x;
   double y;
   double endY;
@@ -60,7 +61,7 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
   Timer? _particleAnimationTimer;
 
   @override
-  void initState() { // Залишається майже без змін
+  void initState() {
     super.initState();
     AchievementManager.setCreeperEffectStatus(true);
 
@@ -78,7 +79,7 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
     _startHissSequence();
   }
 
-  Future<void> _startHissSequence() async { // Залишається без змін
+  Future<void> _startHissSequence() async {
     if (!mounted) return;
     setState(() { _stage = ExplosionStage.hissing; });
     _greenFlashController.repeat(period: const Duration(milliseconds: 700));
@@ -93,7 +94,7 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
     _startExplosionSequence();
   }
 
-  Future<void> _startExplosionSequence() async { // Залишається без змін
+  Future<void> _startExplosionSequence() async {
     if (!mounted) return;
     AchievementManager.show(context, 'survived_creeper');
     _explosionPlayer.play(AssetSource('audio/creeper-explosion.mp3'));
@@ -112,7 +113,7 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
     }
   }
 
-  void _showYouDiedScreen() { // Залишається без змін
+  void _showYouDiedScreen() {
     if (!mounted) return;
     _particleAnimationTimer?.cancel();
     setState(() {
@@ -121,7 +122,7 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
     });
   }
 
-  void _generateParticles(Size screenSize) { // Залишається без змін
+  void _generateParticles(Size screenSize) {
     const particleCount = 450; 
     _particles = []; 
     for (int i = 0; i < particleCount; i++) {
@@ -140,7 +141,7 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
     }
   }
 
-  void _animateParticles(Size screenSize) { // Залишається без змін
+  void _animateParticles(Size screenSize) {
     _particleAnimationTimer?.cancel(); 
     _particleAnimationTimer = Timer.periodic(const Duration(milliseconds: 25), (timer) {
       if (!mounted || _stage != ExplosionStage.exploding) {
@@ -183,14 +184,14 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
     });
   }
 
-  void _handleRespawn() { // Залишається без змін
+  void _handleRespawn() {
     if (!mounted) return;
     widget.onEffectComplete(); 
     web.window.location.reload(); 
   }
 
   @override
-  void dispose() { // Залишається без змін
+  void dispose() {
     _hissPlayer.dispose();
     _explosionPlayer.dispose();
     _greenFlashController.dispose();
@@ -199,12 +200,10 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
     super.dispose();
   }
 
-  // Оновлений стиль для кнопок "Respawn" та "Title Screen"
   ButtonStyle _minecraftButtonStyle(BuildContext context) {
-    // Кольори як на скріншоті Disabled-Death-Screen.png
-    const buttonBackgroundColor = Color(0xFF707070); // Основний сірий
-    const buttonBorderColorLight = Color(0xFFABABAB); // Світла частина рамки (зверху/зліва)
-    const buttonBorderColorDark = Color(0xFF373737);  // Темна частина рамки (знизу/справа)
+    const buttonBackgroundColor = Color(0xFF707070); 
+    const buttonBorderColorLight = Color(0xFFABABAB); 
+    const buttonBorderColorDark = Color(0xFF373737);  
     const textColor = Colors.white;
 
     return ButtonStyle(
@@ -212,34 +211,29 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
       foregroundColor: WidgetStateProperty.all(textColor),
       padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 20, vertical: 10)),
       textStyle: WidgetStateProperty.all(
-        GoogleFonts.pressStart2p(fontSize: 10, color: textColor), // Менший шрифт
+        GoogleFonts.pressStart2p(fontSize: 10, color: textColor),
       ),
-      elevation: WidgetStateProperty.all(0), // Прибираємо стандартну тінь Flutter
+      elevation: WidgetStateProperty.all(0), 
       shape: WidgetStateProperty.all(
-        // Створюємо "псевдо-3D" рамку за допомогою StackedBorders
-        // або просто BeveledRectangleBorder з одним кольором рамки
-        // Для простоти використаємо Beveled з легким заокругленням
-         BeveledRectangleBorder(
-          borderRadius: BorderRadius.circular(1.5), // ⬅️ Дуже легке заокруглення
+         const BeveledRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(1.5)),
         )
       ),
-      // Для більш точного ефекту Minecraft кнопок потрібен CustomPainter або Stack з Container'ами
-      // Ми зробимо простіший варіант з рамкою і фоном
       side: WidgetStateProperty.resolveWith<BorderSide>(
         (Set<WidgetState> states) {
           if (states.contains(WidgetState.pressed)) {
-            return const BorderSide(color: buttonBorderColorDark, width: 2.0); // Темніша при натисканні
+            return const BorderSide(color: buttonBorderColorDark, width: 2.0);
           }
-          return const BorderSide(color: buttonBorderColorLight, width: 1.0); // Світліша в спокої
+          return const BorderSide(color: buttonBorderColorLight, width: 1.0); 
         },
       ),
        overlayColor: WidgetStateProperty.resolveWith<Color?>(
         (Set<WidgetState> states) {
           if (states.contains(WidgetState.hovered)) {
-            return Colors.white.withOpacity(0.1);
+            return Colors.white.withAlpha(25);
           }
           if (states.contains(WidgetState.pressed)) {
-            return Colors.black.withOpacity(0.1);
+            return Colors.black.withAlpha(25);
           }
           return null; 
         },
@@ -251,37 +245,36 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
   Widget build(BuildContext context) {
     return Material(
       type: MaterialType.transparency,
-      child: IgnorePointer( // Клікати можна тільки на кнопки Respawn/Title Screen
+      child: IgnorePointer(
         ignoring: _stage != ExplosionStage.youDied,
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // Розмиття фону ТІЛЬКИ під час вибуху та екрану "You Died"
             if (_stage == ExplosionStage.exploding || _stage == ExplosionStage.youDied)
               Positioned.fill(
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0), // Сила розмиття
+                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                   child: Container(
-                    // Затемнення + ледь помітний червонуватий відтінок для "You Died"
                     color: _stage == ExplosionStage.youDied 
-                           ? const Color(0xFF520000).withOpacity(0.45) // Червонуватий під час "You Died"
-                           : Colors.black.withOpacity(0.65), // Просто затемнення під час вибуху
+                           ? const Color(0xFF520000).withAlpha((0.45 * 255).round()) // ⬅️ Виправлено withOpacity
+                           : Colors.black.withAlpha((0.65 * 255).round()), // ⬅️ Виправлено withOpacity
                   ), 
                 ),
               ),
 
-            if (_stage == ExplosionStage.hissing) // Залишається без змін
+            if (_stage == ExplosionStage.hissing)
               AnimatedBuilder(
                 animation: _greenFlashAnimation,
                 builder: (context, child) {
                   return Opacity(
                     opacity: _greenFlashAnimation.value,
-                    child: Container(color: Colors.green.withOpacity(0.7)),
+                    // ⬇️ Виправлено withOpacity
+                    child: Container(color: Colors.green.withAlpha((0.7 * 255).round())),
                   );
                 }
               ),
 
-            if (_stage == ExplosionStage.exploding) // Залишається без змін
+            if (_stage == ExplosionStage.exploding)
               ..._particles.map((p) { 
                 return Positioned(
                   left: p.x,
@@ -293,14 +286,14 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
                       height: p.size,
                       decoration: BoxDecoration(
                         color: p.color,
-                        border: Border.all(color: Colors.black.withOpacity(0.2), width: 0.5)
+                        // ⬇️ Виправлено withOpacity
+                        border: Border.all(color: Colors.black.withAlpha((0.2 * 255).round()), width: 0.5)
                       ),
                     ),
                   ),
                 );
               }),
             
-            // Екран "YOU DIED" - тепер стилізований точно як у Minecraft
             if (_stage == ExplosionStage.youDied)
               Center(
                 child: Column(
@@ -309,20 +302,19 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
                     Text(
                       'You Died!', 
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.getFont( // Використовуємо GoogleFonts для гнучкості
-                        'Press Start 2P', // Або інший піксельний шрифт, якщо цей не підходить
-                        fontSize: 32, // Розмір як на скріншоті
-                        color: const Color(0xFFFC5555), // Червоний колір
-                        shadows: [ // Тінь для тексту
-                          const Shadow(color: Color(0xFF3E0000), offset: Offset(2.5, 2.5), blurRadius: 0),
+                      style: GoogleFonts.pressStart2p(
+                        fontSize: 32, 
+                        color: const Color(0xFFFC5555), 
+                        shadows: [
+                          // ⬇️ Виправлено withOpacity
+                          BoxShadow(color: const Color(0xFF3E0000).withAlpha((0.7 * 255).round()), offset: const Offset(2.5, 2.5), blurRadius: 0),
                         ]
                       ),
                     ),
-                    const SizedBox(height: 20), // Відступ між текстами
+                    const SizedBox(height: 20),
                     Text(
-                      "${tr(context, 'score_text')}0", // Використовуємо ключ, але рахунок завжди 0
-                      style: GoogleFonts.getFont(
-                        'Press Start 2P',
+                      "${tr(context, 'score_text')}0",
+                      style: GoogleFonts.pressStart2p(
                         fontSize: 16,
                         color: Colors.white,
                          shadows: [
@@ -331,9 +323,8 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
                       ),
                     ),
                     const SizedBox(height: 35), 
-                    // Кнопки
-                    SizedBox( // Обмежуємо ширину кнопок
-                      width: 220, // Ширина кнопок як у Minecraft
+                    SizedBox(
+                      width: 220,
                       child: ElevatedButton(
                         onPressed: _handleRespawn,
                         style: _minecraftButtonStyle(context), 
@@ -344,7 +335,7 @@ class _CreeperExplosionEffectState extends State<CreeperExplosionEffect> with Ti
                     SizedBox(
                       width: 220,
                       child: ElevatedButton(
-                        onPressed: _handleRespawn, // Поки що теж перезавантажує, можна змінити на повернення на головну
+                        onPressed: _handleRespawn, 
                         style: _minecraftButtonStyle(context),
                         child: Text(tr(context, 'title_screen_button_text')),
                       ),

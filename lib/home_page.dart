@@ -8,7 +8,7 @@ import 'localization/strings.dart';
 import 'widgets/xp_bar_widget.dart'; 
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key}); 
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -21,10 +21,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // AchievementManager.resetSessionAchievements(); // ⬅️ Цей рядок більше не потрібен!
-                                                  // Або можна викликати для очищення саме кешу сесії, 
-                                                  // але персистентні ачівки залишаться.
-                                                  // Для нашої мети - просто прибираємо.
   }
 
   @override
@@ -33,12 +29,7 @@ class _HomePageState extends State<HomePage> {
     if (!_firstVisitAchievementShown && mounted) {
       Future.delayed(const Duration(milliseconds: 700), () {
         if (mounted) {
-           // Ачівка першого візиту тепер теж буде персистентною
            AchievementManager.show(context, 'first_visit'); 
-           // Не потрібно setState для _firstVisitAchievementShown,
-           // бо AchievementManager сам не покаже її вдруге.
-           // Але якщо ти хочеш якусь логіку, що виконується тільки раз за завантаження сторінки,
-           // то цей прапорець може бути корисним. Для ачівок - вже ні.
            _firstVisitAchievementShown = true; 
         }
       });
@@ -52,15 +43,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _getSelectedScreen() {
+    // ⬇️ ДІАГНОСТИЧНИЙ PRINT ⬇️
+    print('[DEBUG HomePage _getSelectedScreen] Selected index: $_selectedIndex, building new screen instance.');
     switch (_selectedIndex) {
       case 0:
-        return const AboutScreen();
+        return AboutScreen(); // ⬅️ НЕМАЄ CONST!
       case 1:
-        return const ProjectsScreen();
+        return ProjectsScreen(); // ⬅️ НЕМАЄ CONST!
       case 2:
-        return const ContactScreen();
+        return ContactScreen(); // ⬅️ НЕМАЄ CONST!
       default:
-        return const AboutScreen();
+        return AboutScreen(); // ⬅️ НЕМАЄ CONST!
     }
   }
 
@@ -68,7 +61,7 @@ class _HomePageState extends State<HomePage> {
     if (isDesktop) {
       return Row(
         children: <Widget>[
-          LeftNavigationBar(
+          LeftNavigationBar( 
             selectedIndex: _selectedIndex,
             onItemTapped: (index) {
               _updateSelectedIndex(index);
@@ -92,6 +85,9 @@ class _HomePageState extends State<HomePage> {
     final double screenWidth = MediaQuery.of(context).size.width;
     const double breakpoint = 768.0; 
     bool isDesktop = screenWidth >= breakpoint;
+    
+    // ⬇️ ДІАГНОСТИЧНИЙ PRINT ⬇️
+    print('[DEBUG HomePage build] Building HomePage. isDesktop: $isDesktop. Current locale from context: ${Localizations.localeOf(context).languageCode}');
 
     return Scaffold(
       appBar: isDesktop 
@@ -100,6 +96,7 @@ class _HomePageState extends State<HomePage> {
               title: Text(tr(context, 'portfolioTitle')),
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
               centerTitle: true,
+              iconTheme: Theme.of(context).appBarTheme.iconTheme,
             ),
       drawer: isDesktop 
           ? null 
