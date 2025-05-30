@@ -1,28 +1,36 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // ⬅️ Новий імпорт!
 import 'widgets/achievement_toast.dart';
-import 'xp_notifier.dart'; // Переконайся, що цей імпорт є
+import 'xp_notifier.dart'; 
 
 class AchievementManager {
-  static final Set<String> _unlockedInSession = {};
+  static const String _prefsKey = 'unlocked_achievements_v1'; // Ключ для збереження
+  static Set<String> _unlockedAchievements = {}; // Зберігає ID розблокованих ачівок
+  static SharedPreferences? _prefs; // Екземпляр SharedPreferences
+
   static OverlayEntry? _overlayEntry;
   static final AudioPlayer _audioPlayer = AudioPlayer();
-
   static bool _audioPlayerListenersAdded = false;
+  
+  static bool isCreeperEffectActive = false; 
+
+  // Ініціалізація - завантажуємо збережені ачівки
+  static Future<void> initialize() async {
+    _prefs = await SharedPreferences.getInstance();
+    final List<String>? unlockedList = _prefs?.getStringList(_prefsKey);
+    if (unlockedList != null) {
+      _unlockedAchievements = unlockedList.toSet();
+    }
+    _setupAudioPlayerListeners();
+    print('[AchievementManager] Initialized. Unlocked achievements: $_unlockedAchievements');
+  }
+
   static void _setupAudioPlayerListeners() {
     if (_audioPlayerListenersAdded) return;
     _audioPlayerListenersAdded = true;
-    // _audioPlayer.onPlayerStateChanged.listen((PlayerState s) {
-    //   print('[AchievementManager] AudioPlayer State: $s');
-    // }, onError: (msg) {
-    //   print('[AchievementManager] AudioPlayer State Error: $msg');
-    // });
-    // _audioPlayer.onLog.listen((String msg) {
-    //    print('[AchievementManager] AudioPlayer Log: $msg');
-    // }, onError: (msg) {
-    //     print('[AchievementManager] AudioPlayer Log Error: $msg');
-    // });
+    // Можна додати логування стану плеєра тут, якщо потрібно для діагностики
   }
 
   static final Map<String, ({IconData icon, String titleKey, String descriptionKey})> _achievementsData = {
@@ -36,35 +44,42 @@ class AchievementManager {
     'switch_language': (icon: Icons.translate_outlined, titleKey: 'ach_get_title', descriptionKey: 'ach_switch_language_desc'),
     'survived_creeper': (icon: Icons.shield_outlined, titleKey: 'ach_get_title', descriptionKey: 'ach_survived_creeper_desc'),
   };
-
-  static bool isCreeperEffectActive = false; 
+  
   static void setCreeperEffectStatus(bool isActive) {
     isCreeperEffectActive = isActive;
   }
 
+  // Метод show тепер не async, бо ініціалізація відбувається в main
   static void show(BuildContext context, String achievementId) {
-    _setupAudioPlayerListeners(); 
+    if (_prefs == null) {
+      print("[AchievementManager] SharedPreferences not initialized! Call initialize() first.");
+      // В ідеалі, initialize() має бути викликаний до будь-якого show()
+      // Можна додати тут await initialize(); але це зробить show() асинхронним
+      // і потребуватиме змін у всіх місцях виклику. Краще гарантувати виклик в main.
+      return; 
+    }
 
-    if (_unlockedInSession.contains(achievementId) || !_achievementsData.containsKey(achievementId)) {
+    // Перевіряємо, чи ачівка вже розблокована (з урахуванням збережених)
+    if (_unlockedAchievements.contains(achievementId) || !_achievementsData.containsKey(achievementId)) {
+      // print('[AchievementManager] Achievement "$achievementId" already unlocked or does not exist.');
       return;
     }
     if (isCreeperEffectActive && achievementId != 'survived_creeper') return;
 
-    _unlockedInSession.add(achievementId);
-    // Додаємо XP, тільки якщо це не ачівка за виживання після кріпера,
-    // бо XP скидається при смерті.
-    if (achievementId != 'survived_creeper') {
+    _unlockedAchievements.add(achievementId); // Додаємо до списку розблокованих
+    _saveUnlockedAchievements(); // Зберігаємо оновлений список
+
+    if (achievementId != 'survived_creeper') { // XP додається за всі, крім виживання після кріпера
       xpNotifier.addXp(); 
     }
     
     final achievementData = _achievementsData[achievementId]!;
+    bool shouldPlaySound = achievementId != 'survived_creeper' && achievementId != 'first_visit';
 
-    bool shouldPlayAchievementSound = achievementId != 'survived_creeper' && achievementId != 'first_visit';
-
-    if (shouldPlayAchievementSound) {
+    if (shouldPlaySound) {
       final String soundPath = 'audio/minecraft-rare-achievement.mp3';
       _audioPlayer.play(AssetSource(soundPath)).catchError((error) {
-        // print('[AchievementManager] Error initiating achievement sound for "$achievementId": $error');
+        print('[AchievementManager] Error playing achievement sound for "$achievementId": $error');
       });
     }
 
@@ -100,7 +115,19 @@ class AchievementManager {
     });
   }
 
-  static void resetSessionAchievements() {
-    _unlockedInSession.clear();
+  static Future<void> _saveUnlockedAchievements() async {
+    await _prefs?.setStringList(_prefsKey, _unlockedAchievements.toList());
+    print('[AchievementManager] Saved unlocked achievements: $_unlockedAchievements');
   }
+
+  // Ця функція тепер для повного скидання (наприклад, для тестування)
+  static Future<void> clearAllPersistedAchievements() async {
+    if (_prefs == null) await initialize(); // Переконуємося, що _prefs ініціалізовано
+    _unlockedAchievements.clear();
+    await _prefs?.remove(_prefsKey);
+    print("[AchievementManager] All persisted achievements cleared.");
+  }
+
+  // resetSessionAchievements більше не потрібен у тому вигляді, як був,
+  // бо тепер стан ачівок персистентний.
 }

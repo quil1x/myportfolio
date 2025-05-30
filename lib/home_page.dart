@@ -5,7 +5,7 @@ import 'screens/projects_screen.dart';
 import 'screens/contact_screen.dart';
 import 'achievement_manager.dart'; 
 import 'localization/strings.dart';
-import 'widgets/xp_bar_widget.dart'; // ⬅️ Імпортуємо нашу шкалу XP!
+import 'widgets/xp_bar_widget.dart'; 
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,7 +21,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    AchievementManager.resetSessionAchievements();
+    // AchievementManager.resetSessionAchievements(); // ⬅️ Цей рядок більше не потрібен!
+                                                  // Або можна викликати для очищення саме кешу сесії, 
+                                                  // але персистентні ачівки залишаться.
+                                                  // Для нашої мети - просто прибираємо.
   }
 
   @override
@@ -30,10 +33,13 @@ class _HomePageState extends State<HomePage> {
     if (!_firstVisitAchievementShown && mounted) {
       Future.delayed(const Duration(milliseconds: 700), () {
         if (mounted) {
+           // Ачівка першого візиту тепер теж буде персистентною
            AchievementManager.show(context, 'first_visit'); 
-           setState(() { 
-             _firstVisitAchievementShown = true;
-           });
+           // Не потрібно setState для _firstVisitAchievementShown,
+           // бо AchievementManager сам не покаже її вдруге.
+           // Але якщо ти хочеш якусь логіку, що виконується тільки раз за завантаження сторінки,
+           // то цей прапорець може бути корисним. Для ачівок - вже ні.
+           _firstVisitAchievementShown = true; 
         }
       });
     }
@@ -58,7 +64,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Нова функція для побудови основного контенту, щоб уникнути дублювання
   Widget _buildMainContentArea(bool isDesktop) {
     if (isDesktop) {
       return Row(
@@ -78,7 +83,6 @@ class _HomePageState extends State<HomePage> {
         ],
       );
     } else {
-      // Для мобільного, AppBar та Drawer керуються Scaffold вище
       return _getSelectedScreen();
     }
   }
@@ -91,14 +95,14 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: isDesktop 
-          ? null // Немає AppBar на десктопі
+          ? null 
           : AppBar(
               title: Text(tr(context, 'portfolioTitle')),
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
               centerTitle: true,
             ),
       drawer: isDesktop 
-          ? null // Немає Drawer на десктопі
+          ? null 
           : Drawer(
               backgroundColor: Theme.of(context).brightness == Brightness.dark 
                   ? const Color(0xFF2D2D2D) 
@@ -111,12 +115,12 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ),
-      body: Column( // ⬅️ Головний контент тепер у Column
+      body: Column(
         children: [
           Expanded(
-            child: _buildMainContentArea(isDesktop), // ⬅️ Основна частина
+            child: _buildMainContentArea(isDesktop),
           ),
-          const XpBarWidget(), // ⬅️ Наша шкала досвіду ВНИЗУ!
+          const XpBarWidget(), 
         ],
       ),
     );
