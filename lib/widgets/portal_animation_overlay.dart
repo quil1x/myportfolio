@@ -18,17 +18,16 @@ class _PortalPixel {
   Rect rect; // Позиція та розмір
   Color color;
   double initialOpacity;
-  double currentOpacity;
+  double currentOpacity = 0.0; // Ініціалізуємо тут, а не через конструктор
   Duration animationDelay;
-  bool isVisible;
+  bool isVisible = false; // Ініціалізуємо тут, а не через конструктор
 
   _PortalPixel({
     required this.rect,
     required this.color,
     required this.initialOpacity,
-    this.currentOpacity = 0.0,
+    // currentOpacity та isVisible прибрані з параметрів
     required this.animationDelay,
-    this.isVisible = false,
   });
 }
 
@@ -38,7 +37,6 @@ class _PortalAnimationOverlayState extends State<PortalAnimationOverlay> with Ti
   final Random _random = Random();
   bool _animationStarted = false;
 
-  // Контролер для загальної анімації появи/зникнення пікселів
   late AnimationController _pixelAnimationController;
 
   @override
@@ -46,11 +44,10 @@ class _PortalAnimationOverlayState extends State<PortalAnimationOverlay> with Ti
     super.initState();
 
     _pixelAnimationController = AnimationController(
-      duration: const Duration(seconds: 2, milliseconds: 500), // Тривалість ефекту
+      duration: const Duration(seconds: 2, milliseconds: 500),
       vsync: this,
     );
     
-    // Генеруємо пікселі один раз
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _generatePixels(MediaQuery.of(context).size);
@@ -60,9 +57,8 @@ class _PortalAnimationOverlayState extends State<PortalAnimationOverlay> with Ti
   }
 
   void _generatePixels(Size screenSize) {
-    const int pixelGridSize = 20; // Розмір сітки (20xN пікселів)
+    const int pixelGridSize = 20;
     final double pixelWidth = screenSize.width / pixelGridSize;
-    // Вираховуємо кількість пікселів по висоті, щоб зберегти пропорції
     final int verticalPixelCount = (screenSize.height / pixelWidth).ceil();
 
     const List<Color> portalColors = [
@@ -82,12 +78,12 @@ class _PortalAnimationOverlayState extends State<PortalAnimationOverlay> with Ti
           rect: Rect.fromLTWH(
             i * pixelWidth, 
             j * pixelWidth, 
-            pixelWidth + 0.5, // +0.5 щоб уникнути проміжків через округлення
+            pixelWidth + 0.5,
             pixelWidth + 0.5,
           ),
           color: portalColors[_random.nextInt(portalColors.length)],
-          initialOpacity: 0.1 + _random.nextDouble() * 0.5, // Різна максимальна прозорість
-          animationDelay: Duration(milliseconds: _random.nextInt(1000)), // Затримка появи
+          initialOpacity: 0.1 + _random.nextDouble() * 0.5,
+          animationDelay: Duration(milliseconds: _random.nextInt(1000)),
         ));
       }
     }
@@ -100,8 +96,6 @@ class _PortalAnimationOverlayState extends State<PortalAnimationOverlay> with Ti
     setState(() { _animationStarted = true; });
     _pixelAnimationController.forward();
 
-
-    // Загальний час ефекту перед зміною теми
     await Future.delayed(_pixelAnimationController.duration! + const Duration(milliseconds: 300)); 
     if (!mounted) return;
 
@@ -123,33 +117,31 @@ class _PortalAnimationOverlayState extends State<PortalAnimationOverlay> with Ti
     return Positioned.fill(
       child: IgnorePointer(
         child: Container(
-          color: Colors.black.withAlpha((0.3 * 255).round()), // Легке затемнення фону
+          color: Colors.black.withAlpha((0.3 * 255).round()), // ВИПРАВЛЕНО: withOpacity
           child: AnimatedBuilder(
             animation: _pixelAnimationController,
             builder: (context, child) {
               return Stack(
                 children: _pixels.map((pixel) {
-                  // Анімація появи та зникнення кожного пікселя
-                  // Проста логіка: з'являється після затримки, тримається, зникає
-                  double currentOpacity = 0.0;
+                  double currentOpacityValue = 0.0; // Перейменовано, щоб уникнути конфлікту з полем
                   if (_animationStarted && _pixelAnimationController.value * _pixelAnimationController.duration!.inMilliseconds > pixel.animationDelay.inMilliseconds) {
-                    // Прогрес життя пікселя після його затримки
                     double lifeProgress = (_pixelAnimationController.value * _pixelAnimationController.duration!.inMilliseconds - pixel.animationDelay.inMilliseconds) / 
-                                          (_pixelAnimationController.duration!.inMilliseconds - pixel.animationDelay.inMilliseconds - 500); // 500ms на зникнення
+                                          (_pixelAnimationController.duration!.inMilliseconds - pixel.animationDelay.inMilliseconds - 500);
                     lifeProgress = lifeProgress.clamp(0.0, 1.0);
 
-                    if (lifeProgress < 0.7) { // З'являється і тримається
-                      currentOpacity = pixel.initialOpacity * (lifeProgress / 0.7) ;
-                    } else { // Зникає
-                      currentOpacity = pixel.initialOpacity * (1 - (lifeProgress - 0.7) / 0.3);
+                    if (lifeProgress < 0.7) {
+                      currentOpacityValue = pixel.initialOpacity * (lifeProgress / 0.7) ;
+                    } else {
+                      currentOpacityValue = pixel.initialOpacity * (1 - (lifeProgress - 0.7) / 0.3);
                     }
-                    currentOpacity = currentOpacity.clamp(0.0, pixel.initialOpacity);
+                    currentOpacityValue = currentOpacityValue.clamp(0.0, pixel.initialOpacity);
                   }
+                  pixel.currentOpacity = currentOpacityValue; // Оновлюємо поле, якщо потрібно десь ще
                   
                   return Positioned.fromRect(
                     rect: pixel.rect,
                     child: Opacity(
-                      opacity: currentOpacity,
+                      opacity: currentOpacityValue,
                       child: Container(color: pixel.color),
                     ),
                   );
