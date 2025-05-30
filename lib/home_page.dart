@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
+import 'dart:ui'; 
 import 'widgets/left_navigation_bar.dart';
 import 'screens/about_screen.dart';
 import 'screens/projects_screen.dart';
 import 'screens/contact_screen.dart';
-import 'screens/nether_details_screen.dart';
-import 'screens/minecraft_wiki_screen.dart'; // <-- ІМПОРТ ЕКРАНУ ВІКІ
+import 'screens/nether_details_screen.dart'; 
+// import 'screens/minecraft_wiki_screen.dart'; // ВИДАЛЕНО ІМПОРТ
 import 'achievement_manager.dart';
 import 'localization/strings.dart';
 import 'widgets/xp_bar_widget.dart';
@@ -44,22 +44,16 @@ class _HomePageState extends State<HomePage> {
     final currentAppMode = themeNotifier.value;
     bool isNether = currentAppMode == AppThemeMode.nether;
 
-    // Індекси:
-    // 0: About/AboutNether
-    // 1: Projects (тільки не Незер)
-    // 2: Contacts (тільки не Незер) / NetherDetails (тільки Незер)
-    // 3: Wiki (завжди)
-
-    // Якщо ми в Незері і намагаємося вибрати Projects (індекс 1), це неможливо,
-    // бо LeftNavigationBar не повинен генерувати такий тап.
-    // Цей код більше для безпеки, якщо індекс зміниться якось інакше.
-    if (isNether && index == 1) {
-      // print("HomePage: Спроба обрати індекс 1 (Проекти) в Незері. Перенаправляємо на індекс 0 (Про Незер).");
-      setState(() { _selectedIndex = 0; });
+    if (isNether && index == 1) { 
+      // Якщо в Незері намагаються вибрати індекс 1 (Проекти),
+      // який прихований, то нічого не робимо.
+      // LeftNavigationBar не має генерувати цей тап.
       return; 
     }
-    
-    // print("HomePage: _updateSelectedIndex to $index");
+    // Якщо індекс поза межами для поточного режиму (наприклад, 3, а вікі немає)
+    // то можна скинути на 0, але краще, щоб LeftNavigationBar не передавав такі індекси.
+    // Наразі максимальний індекс, який може прийти - 2 (або 0) для Незера,
+    // і 0, 1, 2 для звичайного світу.
     setState(() {
       _selectedIndex = index;
     });
@@ -69,29 +63,26 @@ class _HomePageState extends State<HomePage> {
     final currentAppMode = themeNotifier.value;
     bool isNether = currentAppMode == AppThemeMode.nether;
 
-    // print("HomePage _getSelectedScreen: index = $_selectedIndex, isNether = $isNether");
-
     if (isNether) {
       switch (_selectedIndex) {
-        case 0: return const AboutScreen();         // "Про Незер"
-        // індекс 1 (Проекти) недоступний в Незері
-        case 2: return const NetherDetailsScreen(); // "Деталі Незеру"
-        case 3: return const MinecraftWikiScreen(); // "Вікі"
-        default: return const AboutScreen();       // За замовчуванням в Незері
+        case 0: return const AboutScreen();
+        case 2: return const NetherDetailsScreen(); 
+        // case 3: // ВИДАЛЕНО, бо немає Вікі
+        default: return const AboutScreen(); 
       }
-    } else { // Звичайний світ
+    } else { 
       switch (_selectedIndex) {
         case 0: return const AboutScreen();
         case 1: return const ProjectsScreen();
         case 2: return const ContactScreen();
-        case 3: return const MinecraftWikiScreen(); // "Вікі"
+        // case 3: // ВИДАЛЕНО
         default: return const AboutScreen();
       }
     }
   }
 
   Widget _buildMainContentArea(BuildContext context, bool isDesktop) {
-    // ... (цей метод залишається без змін відносно попередньої версії з налаштуванням прозорості)
+    // ... (код _buildMainContentArea залишається таким, як був у попередній відповіді)
     final currentTheme = Theme.of(context);
     Color contentBackgroundColor = currentTheme.scaffoldBackgroundColor;
     double opacityFactor = 0.75; 
@@ -103,7 +94,7 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           LeftNavigationBar(
             selectedIndex: _selectedIndex,
-            onItemTapped: _updateSelectedIndex, // Передаємо метод напряму
+            onItemTapped: _updateSelectedIndex,
           ),
           Expanded(
             child: Container(
@@ -125,6 +116,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // ... (початок build) ...
     final double screenWidth = MediaQuery.of(context).size.width;
     const double breakpoint = 768.0;
     bool isDesktop = screenWidth >= breakpoint;
@@ -132,22 +124,23 @@ class _HomePageState extends State<HomePage> {
     return ValueListenableBuilder<AppThemeMode>(
       valueListenable: themeNotifier,
       builder: (context, currentAppMode, __) {
-        // print("--- HomePage ValueListenableBuilder Rebuild ---");
-        // print("Current App Theme Mode: $currentAppMode, Selected Index: $_selectedIndex");
-
         bool isNetherNow = currentAppMode == AppThemeMode.nether;
-        if (isNetherNow && _selectedIndex == 1) { 
-          // print("HomePage: Перехід в Незер, індекс був 1 (Проекти), скидаємо на 0.");
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              _updateSelectedIndex(0); 
-            }
-          });
+        // Логіка скидання індексу, якщо він став недійсним при вході в Незер
+        if (isNetherNow && _selectedIndex == 1) { // Якщо були "Проекти" (індекс 1)
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                _updateSelectedIndex(0); // Скидаємо на "Про Незер" (індекс 0)
+              }
+            });
         }
+        // Якщо _selectedIndex був 3 (для вікі), а вікі тепер немає,
+        // то при наступному білді _getSelectedScreen поверне AboutScreen за замовчуванням.
+        // Це має бути достатньо, бо навігація на індекс 3 більше неможлива.
         
+        // ... (решта коду для backgroundImagePath, overlayColor, backgroundDisplayWidget) ...
         String? backgroundImagePath;
         Color overlayColor; 
-        // ... (логіка backgroundImagePath та overlayColor як у попередній відповіді)
+
         if (currentAppMode == AppThemeMode.light) {
           backgroundImagePath = 'assets/images/minecraft_day_bg.png'; 
           overlayColor = Colors.white.withAlpha((0.05 * 255).round()); 
@@ -162,9 +155,7 @@ class _HomePageState extends State<HomePage> {
           overlayColor = Colors.transparent;
         }
 
-
         Widget backgroundDisplayWidget = const SizedBox.shrink();
-        // ... (логіка backgroundDisplayWidget з Image.asset та BackdropFilter як у попередній відповіді)
         if (backgroundImagePath != null) {
           Widget image = Image.asset(
             backgroundImagePath,
@@ -172,7 +163,6 @@ class _HomePageState extends State<HomePage> {
             width: double.infinity,
             height: double.infinity,
             errorBuilder: (context, error, stackTrace) {
-              // print("!!! ПОМИЛКА ЗАВАНТАЖЕННЯ ФОНОВОГО ЗОБРАЖЕННЯ: '$backgroundImagePath' - Помилка: $error");
               return Container( 
                 color: Colors.red.withAlpha(150),
                 child: Center(
@@ -202,7 +192,6 @@ class _HomePageState extends State<HomePage> {
           );
         }
 
-
         return Scaffold(
           backgroundColor: Colors.transparent, 
           appBar: isDesktop ? null : AppBar(
@@ -211,11 +200,11 @@ class _HomePageState extends State<HomePage> {
             centerTitle: true,
             iconTheme: Theme.of(context).appBarTheme.iconTheme,
           ),
-          drawer: isDesktop ? null : Drawer( 
+          drawer: isDesktop ? null : Drawer(
             backgroundColor: (Theme.of(context).brightness == Brightness.dark
                 ? const Color(0xFF2D2D2D)
                 : Colors.grey[200])?.withAlpha((0.9 * 255).round()),
-            child: LeftNavigationBar( selectedIndex: _selectedIndex, onItemTapped: _updateSelectedIndex ) 
+            child: LeftNavigationBar( selectedIndex: _selectedIndex, onItemTapped: _updateSelectedIndex ),
           ),
           body: Stack(
             children: [

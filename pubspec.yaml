@@ -29,6 +29,7 @@ flutter:
     - assets/fonts/
     - assets/audio/
     - assets/images/
+    - assets/minecraft_data/
 
   fonts:
     - family: PressStart2P

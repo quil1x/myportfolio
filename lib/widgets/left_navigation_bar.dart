@@ -35,6 +35,7 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
 
   void _triggerCreeperExplosion(BuildContext context) {
     if (AchievementManager.isCreeperEffectActive || _creeperOverlayEntry != null) return;
+
     _creeperOverlayEntry = OverlayEntry(
       builder: (context) => CreeperExplosionEffect(
         onEffectComplete: () {
@@ -53,7 +54,11 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Color(0xFF5E2612),
-          content: Text('ЯƎHTƎN', textAlign: TextAlign.center, style: TextStyle(fontFamily: 'PressStart2P', fontSize: 14, color: Color(0xFFFF7700))),
+          content: Text(
+            'ЯƎHTƎN',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontFamily: 'PressStart2P', fontSize: 14, color: Color(0xFFFF7700)),
+          ),
           duration: Duration(seconds: 2),
         ),
       );
@@ -73,7 +78,7 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
       navBarColor = const Color(0xFF2D2D2D).withAlpha((navBarOpacity * 255).round());
     } else if (isNetherThemeActive) {
       navBarColor = theme.cardColor.withAlpha((navBarOpacity * 230).round());
-    } else {
+    } else { 
       navBarColor = (Colors.grey[200] ?? Colors.grey.shade200).withAlpha((navBarOpacity * 255).round());
     }
 
@@ -84,7 +89,10 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
         icon: Icons.person_outline,
         titleKey: isNetherThemeActive ? 'nav_about_nether' : 'nav_about',
         isSelected: widget.selectedIndex == 0,
-        onTap: () => widget.onItemTapped(0),
+        onTap: () {
+          AchievementManager.show(context, 'view_about');
+          widget.onItemTapped(0);
+        },
       ),
     );
 
@@ -94,7 +102,10 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
           icon: Icons.construction_outlined,
           titleKey: 'nav_projects',
           isSelected: widget.selectedIndex == 1,
-          onTap: () => widget.onItemTapped(1),
+          onTap: () {
+            AchievementManager.show(context, 'view_projects');
+            widget.onItemTapped(1);
+          },
         ),
       );
       navItems.add(
@@ -102,32 +113,32 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
           icon: Icons.chat_bubble_outline,
           titleKey: 'nav_contacts',
           isSelected: widget.selectedIndex == 2,
-          onTap: () => widget.onItemTapped(2),
+          onTap: () {
+            AchievementManager.show(context, 'view_contacts');
+            widget.onItemTapped(2);
+          },
         ),
       );
-    } else {
+    } else { // В Незері
       navItems.add(
         NavItem(
           icon: Icons.explore_outlined, 
-          titleKey: 'nav_nether_details',
-          isSelected: widget.selectedIndex == 2,
+          titleKey: 'nav_nether_details', 
+          isSelected: widget.selectedIndex == 2, 
           onTap: () => widget.onItemTapped(2),
         ),
       );
     }
-
-    // Додаємо Вікі як останній пункт основного меню (індекс 3)
-    navItems.add(
-      NavItem(
-        icon: Icons.menu_book_outlined, 
-        titleKey: 'nav_wiki',           
-        isSelected: widget.selectedIndex == 3, // Новий індекс
-        onTap: () {
-          // AchievementManager.show(context, 'used_wiki'); // Можна додати ачівку
-          widget.onItemTapped(3); // Новий індекс
-        },
-      ),
-    );
+    
+    // Пункт "Minecraft Вікі" (індекс 3) ВИДАЛЕНО
+    // navItems.add(
+    //   NavItem(
+    //     icon: Icons.menu_book_outlined,
+    //     titleKey: 'nav_wiki',
+    //     isSelected: widget.selectedIndex == 3,
+    //     onTap: () => widget.onItemTapped(3),
+    //   ),
+    // );
 
     return Container(
       width: 260,
