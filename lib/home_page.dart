@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'dart:ui'; // Залишаємо для ImageFilter та BackdropFilter для явності
-import 'widgets/left_navigation_bar.dart';
+import 'dart:ui'; // Для ImageFilter та BackdropFilter
+
 import 'screens/about_screen.dart';
-import 'screens/projects_screen.dart';
 import 'screens/contact_screen.dart';
-import 'screens/nether_details_screen.dart'; 
-import 'screens/ghast_game_screen.dart'; // Якщо ти додав гру
-import 'achievement_manager.dart'; 
-import 'localization/strings.dart'; // Потрібен для tr() в AppBar
-import 'widgets/xp_bar_widget.dart'; 
+import 'screens/ghast_game_screen.dart';
+import 'screens/nether_details_screen.dart';
+import 'screens/projects_screen.dart';
+import 'widgets/left_navigation_bar.dart'; // Потрібен
+import 'widgets/xp_bar_widget.dart';     // Потрібен
+import 'localization/strings.dart';     // Потрібен для tr()
 import 'theme_notifier.dart';
-import 'language_notifier.dart'; 
+import 'language_notifier.dart';
+import 'achievement_manager.dart'; // Потрібен для first_visit
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key}); 
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -21,7 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  bool _firstVisitAchievementShown = false; 
+  bool _firstVisitAchievementShown = false;
 
   @override
   void initState() {
@@ -29,13 +30,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void didChangeDependencies() { 
+  void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_firstVisitAchievementShown && mounted) {
       Future.delayed(const Duration(milliseconds: 700), () {
         if (mounted) {
-           AchievementManager.show(context, 'first_visit'); 
-           _firstVisitAchievementShown = true; 
+          AchievementManager.show(context, 'first_visit');
+          // setState(() { // Цей setState може бути зайвим, якщо _firstVisitAchievementShown не впливає на UI
+            _firstVisitAchievementShown = true;
+          // });
         }
       });
     }
@@ -44,20 +47,26 @@ class _HomePageState extends State<HomePage> {
   void _updateSelectedIndex(int index) {
     final currentAppMode = themeNotifier.value;
     bool isNether = currentAppMode == AppThemeMode.nether;
+    int newIndex = index;
 
-    if (isNether && index == 1) {
-      return; 
-    }
-    if (isNether && (index < 0 || index == 1 || index > 3)) { // 3 - індекс гри
-      index = 0;
-    }
-    if (!isNether && (index < 0 || index > 3)) { // 3 - індекс гри
-       index = 0;
+    if (isNether) {
+      if (index == 1) {newIndex = 0;}
+      else if (index != 0 && index != 2 && index != 3) {newIndex = 0;}
+    } else {
+      if (index < 0 || index > (_isGhastGameAvailableOnlyInNether() ? 2 : 2) ) { // Індекс 3 (гра) прибрали зі звичайного світу
+          newIndex = 0;
+      }
     }
     
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (mounted && _selectedIndex != newIndex) {
+        setState(() {
+          _selectedIndex = newIndex;
+        });
+    }
+  }
+
+  bool _isGhastGameAvailableOnlyInNether() {
+    return true; 
   }
 
   Widget _getSelectedScreen() {
@@ -76,13 +85,12 @@ class _HomePageState extends State<HomePage> {
         case 0: return const AboutScreen();
         case 1: return const ProjectsScreen();
         case 2: return const ContactScreen();
-        case 3: return const GhastGameScreen(); 
         default: return const AboutScreen();
       }
     }
   }
-
-  Widget _buildMainContentArea(BuildContext context, bool isDesktop) {
+  
+  Widget _buildMainContentArea(BuildContext context, bool isDesktop) { // Переконайся, що цей метод є
     final currentTheme = Theme.of(context);
     Color contentBackgroundColor = currentTheme.scaffoldBackgroundColor;
     double opacityFactor = 0.75; 
@@ -127,16 +135,19 @@ class _HomePageState extends State<HomePage> {
           valueListenable: themeNotifier,
           builder: (context, currentAppMode, __) {
             bool isNetherNow = currentAppMode == AppThemeMode.nether;
+            
             if (isNetherNow && _selectedIndex == 1) { 
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    _updateSelectedIndex(0); 
-                  }
+                  if (mounted) { _updateSelectedIndex(0); }
+                });
+            } else if (!isNetherNow && _selectedIndex == 3 && _isGhastGameAvailableOnlyInNether()) { 
+                 WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) { _updateSelectedIndex(0); }
                 });
             }
             
             String? backgroundImagePath;
-            Color overlayColor; // Ініціалізуємо пізніше
+            Color overlayColor; 
 
             if (currentAppMode == AppThemeMode.light) {
               backgroundImagePath = 'assets/images/minecraft_day_bg.png'; 
@@ -148,15 +159,14 @@ class _HomePageState extends State<HomePage> {
               backgroundImagePath = 'assets/images/minecraft_nether_bg.png'; 
               overlayColor = Colors.black.withAlpha((0.4 * 255).round());
             } else {
-              // Забезпечуємо, що overlayColor завжди ініціалізований
-              backgroundImagePath = null;
+              backgroundImagePath = null; 
               overlayColor = Colors.transparent; 
             }
 
-            Widget backgroundDisplayWidget = const SizedBox.shrink();
-            if (backgroundImagePath != null) { // Ця перевірка вже гарантує, що backgroundImagePath не null
-              Widget image = Image.asset( // ВИПРАВЛЕНО: додано аргумент шляху
-                backgroundImagePath, // Не може бути null тут через перевірку вище
+            Widget backgroundDisplayWidget;
+            if (backgroundImagePath != null) {
+              Widget imageWidget = Image.asset( // ВИПРАВЛЕНО: передаємо шлях
+                backgroundImagePath, 
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
@@ -165,29 +175,38 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.red.withAlpha(150),
                     child: Center(
                       child: Text(
-                        "ПОМИЛКА ФОНУ:\nНе вдалося завантажити\n'$backgroundImagePath'",
+                        "ПОМИЛКА ФОНУ:\n'$backgroundImagePath'",
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: Colors.white, fontSize: 10),
                       ),
                     ),
                   );
                 },
               );
 
-              backgroundDisplayWidget = Stack(
-                fit: StackFit.expand,
-                children: [
-                  image,
-                  ClipRect(
-                    child: BackdropFilter( // ВИПРАВЛЕНО: Додано filter
-                      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0), 
-                      child: Container(
-                        color: Colors.black.withAlpha((0.01 * 255).round()), 
+              // Застосовуємо блюр, якщо це не екран гри в Незері
+              bool applyGlobalBlur = !(_selectedIndex == 3 && isNetherNow);
+
+              if (applyGlobalBlur) {
+                backgroundDisplayWidget = Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    imageWidget, 
+                    ClipRect(
+                      child: BackdropFilter( // ВИПРАВЛЕНО: додано filter
+                        filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0), 
+                        child: Container(
+                          color: Colors.black.withAlpha((0.01 * 255).round()), 
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              );
+                  ],
+                );
+              } else {
+                backgroundDisplayWidget = imageWidget; // Без блюру для екрану гри
+              }
+            } else {
+              backgroundDisplayWidget = const SizedBox.shrink(); 
             }
 
             return Scaffold(
@@ -195,7 +214,7 @@ class _HomePageState extends State<HomePage> {
               appBar: isDesktop 
                   ? null 
                   : AppBar(
-                      title: Text(tr(context, 'portfolioTitle')), // tr() використовується тут
+                      title: Text(tr(context, 'portfolioTitle')),
                       backgroundColor: Theme.of(context).appBarTheme.backgroundColor?.withAlpha((0.8 * 255).round()),
                       centerTitle: true,
                       iconTheme: Theme.of(context).appBarTheme.iconTheme,
@@ -210,10 +229,9 @@ class _HomePageState extends State<HomePage> {
                     ),
               body: Stack(
                 children: [
-                  // Умова if (backgroundImagePath != null) тут вже не потрібна,
-                  // бо backgroundDisplayWidget буде SizedBox.shrink(), якщо шлях null
                   Positioned.fill(child: backgroundDisplayWidget),
-                  Positioned.fill(child: Container(color: overlayColor)), // overlayColor тепер завжди ініціалізований
+                  if (!(_selectedIndex == 3 && isNetherNow)) // Не показувати глобальний оверлей, якщо це екран гри
+                     Positioned.fill(child: Container(color: overlayColor)), 
                   Column(
                     children: [
                       Expanded(

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-// Виправлений відносний шлях до language_notifier.dart,
-// припускаючи, що language_notifier.dart лежить в папці lib/, 
-// а strings.dart - в lib/localization/
-import '../language_notifier.dart'; 
+import '../language_notifier.dart'; // Переконайся, що шлях правильний
 
 const Map<String, Map<String, String>> localizedStrings = {
   'uk': {
@@ -104,7 +101,7 @@ const Map<String, Map<String, String>> localizedStrings = {
     'ghast_game_reflected': 'Відбито!', 
     'ghast_hit': 'Влучив!',         
   },
-  'en': {
+  'en': { // Переконайся, що тут також є всі відповідні англійські ключі
     'portfolioTitle': 'Nazariy Luchkiv Portfolio',
     'playerName': 'Nazariy Luchkiv',
 
@@ -181,8 +178,7 @@ const Map<String, Map<String, String>> localizedStrings = {
     'title_screen_button_text': 'TITLE SCREEN',
     'score_text': 'Score: ',
     'xp_label': 'Experience:',
-
-    // Keys for Ghast Game
+    
     'ghast_game_title': 'Reflect the Ghast Attack!',
     'ghast_game_score': 'Score: ',
     'ghast_game_lives': 'Lives: ', 
@@ -197,7 +193,7 @@ const Map<String, Map<String, String>> localizedStrings = {
 };
 
 String tr(BuildContext context, String key) {
-  final locale = languageNotifier.value; // Тепер languageNotifier має бути доступний
+  final locale = languageNotifier.value;
   // print('[DEBUG tr_function] Current language code: ${locale.languageCode}, For Key: "$key" -> Result: "${localizedStrings[locale.languageCode]?[key] ?? "KEY_NOT_FOUND"}"');
   return localizedStrings[locale.languageCode]?[key] ?? key;
 }
