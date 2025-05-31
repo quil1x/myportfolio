@@ -1,29 +1,23 @@
 import 'package:flutter/material.dart';
 import '../localization/strings.dart';
-import '../widgets/project_card_widget.dart';
-import '../language_notifier.dart'; // <-- ДОДАЙ ЦЕЙ ІМПОРТ
+import '../widgets/project_card_widget.dart'; // Переконайся, що цей віджет також коректно використовує tr()
+import '../language_notifier.dart'; // Важливий імпорт
 
 class ProjectsScreen extends StatelessWidget {
-  // Якщо ти плануєш використовувати ValueKey, як ми обговорювали,
-  // то розкоментуй наступний рядок і конструктор:
-  // const ProjectsScreen({super.key});
-  const ProjectsScreen({super.key}); // Дозволяє передавати ключ
+  const ProjectsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Обгортаємо основний вміст у ValueListenableBuilder,
-    // який слухатиме зміни в languageNotifier
     return ValueListenableBuilder<Locale>(
-      valueListenable: languageNotifier,
+      valueListenable: languageNotifier, // Слухаємо зміни мови
       builder: (context, currentLocale, child) {
-        // Тепер tr() буде викликатися з оновленим контекстом щоразу,
-        // як змінюється мова, і весь цей блок буде перебудовуватися.
+        // Цей builder буде викликатися щоразу, коли змінюється currentLocale
         return Padding(
           padding: const EdgeInsets.all(40.0),
           child: ListView(
             children: [
               Text(
-                tr(context, 'projects_title'),
+                tr(context, 'projects_title'), // Має оновлюватися
                 style: Theme.of(context).textTheme.displaySmall,
               ),
               const SizedBox(height: 30),
@@ -43,13 +37,13 @@ class ProjectsScreen extends StatelessWidget {
                 achievementIdOnClick: 'open_github_repo',
               ),
               const SizedBox(height: 25),
-              _buildInProgressCard(
+              _buildInProgressCard( // Передаємо context для tr() всередині
                 context,
                 titleKey: 'projects_alpha_title',
                 descriptionKey: 'projects_alpha_desc',
               ),
               const SizedBox(height: 25),
-              _buildInProgressCard(
+              _buildInProgressCard( // Передаємо context для tr() всередині
                 context,
                 titleKey: 'projects_beta_title',
                 descriptionKey: 'projects_beta_desc',
@@ -63,14 +57,14 @@ class ProjectsScreen extends StatelessWidget {
   }
 
   Widget _buildInProgressCard(
-    BuildContext context, {
+    BuildContext context, { // context потрібен для tr()
     required String titleKey,
     required String descriptionKey,
   }) {
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(25.0),
-      color: theme.cardColor.withAlpha((150 * 255 / 255).round()), // Використовуємо withAlpha
+      color: theme.cardColor.withAlpha((150 * 255 / 255).round()),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

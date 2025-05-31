@@ -1,32 +1,40 @@
 import 'package:flutter/material.dart';
-import '../language_notifier.dart'; // Переконайся, що шлях правильний
+import '../language_notifier.dart'; // Переконайся, що шлях до language_notifier.dart правильний
 
 const Map<String, Map<String, String>> localizedStrings = {
   'uk': {
     'portfolioTitle': 'Портфоліо Назарія Лучківа',
     'playerName': 'Назарій Лучків',
+    
+    // Навігація
     'nav_about': 'Про Мене',
-    'nav_about_nether': 'Про Незер',
+    'nav_about_nether': 'Пекельні Вітання!', // Змінено для кнопки навігації в Незері
     'nav_projects': 'Проєкти',
     'nav_contacts': 'Контакти',
-    'nav_nether_details': 'Деталі Незеру',
+    'nav_nether_details': 'Деталі Незеру', // Для окремої сторінки деталей Незеру
     'nav_settings': 'Налаштування',
-    // 'nav_wiki': 'Minecraft Вікі', // ВИДАЛЕНО
 
+    // Сторінка "Про мене" (звичайний світ)
     'play_button': 'PLAY (Classic)',
     'about_title': 'ПРО МЕНЕ:',
     'about_text_p1': 'Привіт! Я Назарій Лучків, мені 15 років. Я навчаюся на професію \'Оператор з обробки інформації та програмного забезпечення\'.',
     'about_text_p2': 'Я люблю грати в ігри та дивитися серіали. Мої улюблені ігри – це Red Dead Redemption 2, The Witcher 3: Wild Hunt та The Last of Us. Із серіалів можу виділити \'Пуститися берега\' (Breaking Bad), \'Краще подзвоніть Солу\' (Better Call Saul) та \'Клан Сопрано\' (The Sopranos).',
     'about_text_p3': 'У майбутньому я планую вивчати програмування.',
     
-    'nether_about_title': 'ПРО НЕЗЕР (Інформація з Wiki):', // Можеш змінити "з Wiki" на щось інше, якщо джерело змінилося
-    'nether_about_p1': 'Незер – це небезпечний, схожий на пекло вимір у Minecraft...', // Залиш ці описи, якщо вони використовуються в AboutScreen/NetherDetailsScreen
-    'nether_about_p2': 'Тут можна знайти фортеці Незера...',
-    'nether_about_p3': 'Подорож у Незер завжди ризикована...',
-    'nether_details_title': 'Світ Незеру', // Можеш залишити або змінити
+    // Сторінка "Про мене" (в Незері - тепер вступний текст)
+    'nether_intro_title': 'ПЕКЕЛЬНІ ВІТАННЯ!', // Змінено для заголовка на сторінці
+    'nether_intro_p1': 'Ти насмілився увійти до Незеру, світу вогню та тіней. Тут звичайні правила не діють, а кожен крок може бути останнім.',
+    'nether_intro_p2': 'Цей вимір випробовує найсміливіших. Досліджуй його таємниці, але будь завжди напоготові!',
+    'nether_intro_p3': 'Можливо, саме тут ти знайдеш те, що шукаєш... або свою загибель.',
+    
+    // Сторінка "Деталі Незеру" (використовує старі ключі з описом Незеру)
+    'nether_details_title': 'Світ Незеру', 
+    'nether_about_p1': 'Незер – це небезпечний, схожий на пекло вимір у Minecraft, наповнений океанами лави, вогнем, унікальними блоками та ворожими мобами.', // Цей текст тепер на NetherDetailsScreen
+    'nether_about_p2': 'Тут можна знайти фортеці Незера з цінними скарбами, бастіони піглінів, а також ресурси, такі як кварц, незер-золото, незерак та стародавні уламки для створення незеритового спорядження.', // Цей текст тепер на NetherDetailsScreen
+    'nether_about_p3': 'Подорож у Незер завжди ризикована, але нагороди можуть бути вартими того!', // Цей текст тепер на NetherDetailsScreen
 
+    // Сторінка "Проекти"
     'projects_title': 'МОЇ ПРОЄКТИ:',
-    // ... (решта ключів для проектів, контактів, налаштувань, ачівок залишаються) ...
     'projects_wip_tag': '(В РОЗРОБЦІ)',
     'project_portfolio_title': 'Pixel Portfolio [Minecraft Style]',
     'project_portfolio_desc': 'Моє портфоліо. Цей сайт зроблено на Flutter та натхненно стилем Minecraft.',
@@ -41,6 +49,7 @@ const Map<String, Map<String, String>> localizedStrings = {
     'projects_beta_title': 'Проєкт "Бета"',
     'projects_beta_desc': 'Ще один проєкт у процесі розробки. Слідкуйте за оновленнями на моєму GitHub!',
     
+    // Сторінка "Контакти"
     'contacts_title': 'КОНТАКТИ:',
     'contacts_subtitle': 'ЗАВЖДИ ВІДКРИТИЙ ДО СПІЛКУВАННЯ ТА НОВИХ ІДЕЙ! ЗВ\'ЯЖІТЬСЯ ЗІ МНОЮ:',
     'contact_github': 'GitHub',
@@ -48,16 +57,18 @@ const Map<String, Map<String, String>> localizedStrings = {
     'contact_instagram': 'Instagram',
     'contact_email': 'Email',
     
+    // Налаштування
     'settings_title': 'НАЛАШТУВАННЯ',
     'theme_action_activate_night': 'Нічний режим', 
     'theme_action_activate_day': 'Денний режим',   
     'theme_action_exit_nether': 'Покинути Незер', 
-    'settings_action_enter_nether': 'Портал в Незер',
+    'settings_action_enter_nether': 'Портал в Незер', // Для кнопки порталу на AboutScreen / Tooltip
     'settings_lang_switch': 'Переключити на English',
     'settings_lang_current': 'Поточна мова:',
     
     'error_launch': 'Не вдалося відкрити',
     
+    // Досягнення
     'ach_get_title': 'Досягнення здобуто!',
     'ach_first_visit_desc': 'Дослідник Портфоліо!',
     'ach_play_game_desc': 'Час для гри!',
@@ -68,39 +79,21 @@ const Map<String, Map<String, String>> localizedStrings = {
     'ach_switch_theme_desc': 'Володар Світла і Темряви!',
     'ach_switch_language_desc': 'Поліглот!',
     'ach_survived_creeper_desc': 'Та ти везунчик!',
-    'ach_nether_portal_opened_desc': 'Ворота Відкрито!',
+    'ach_nether_portal_opened_desc': 'Ворота Відкрито!', // Це досягнення все ще актуальне
 
+    // Екран "Ти помер"
     'you_died_text': 'ВИ ЗАГИНУЛИ!',
     'respawn_button_text': 'ВІДРОДИТИСЯ',
     'title_screen_button_text': 'ГОЛОВНЕ МЕНЮ',
-    'score_text': 'Рахунок: ',
+    'score_text': 'Рахунок: ', // Можливо, знадобиться для майбутніх ігор
     'xp_label': 'Досвід:',
-
-    // Ключі для Minecraft Wiki ВИДАЛЕНО:
-    // 'wiki_title': 'Пошук по Minecraft Вікі',
-    // 'wiki_search_hint': 'Введи назву (блок, предмет, моб...)',
-    // 'wiki_search_button': 'Знайти',
-    // 'wiki_no_results': 'На жаль, нічого не знайдено за запитом:',
-    // 'wiki_enter_query': 'Введи свій запит про Minecraft...',
-    // 'wiki_searching': 'Шукаю інформацію в Вікі...',
-    // 'wiki_error_fetch': 'Помилка отримання даних. Спробуй ще раз.',
   },
   'en': {
-    // ... (аналогічно видали ключі для англійської версії) ...
-    'nav_wiki': 'Minecraft Wiki', // ВИДАЛЕНО
-
-    'wiki_title': 'Minecraft Wiki Search', // ВИДАЛЕНО
-    'wiki_search_hint': 'Enter name (block, item, mob...)', // ВИДАЛЕНО
-    'wiki_search_button': 'Search', // ВИДАЛЕНО
-    'wiki_no_results': 'Unfortunately, nothing found for your query:', // ВИДАЛЕНО (або залиш, якщо може знадобитися для інших пошуків)
-    'wiki_enter_query': 'Enter your Minecraft query...', // ВИДАЛЕНО
-    'wiki_searching': 'Searching the Wiki for info...', // ВИДАЛЕНО
-    'wiki_error_fetch': 'Error fetching data. Please try again.', // ВИДАЛЕНО
-     // Решта англійських ключів залишаються...
     'portfolioTitle': 'Nazariy Luchkiv Portfolio',
     'playerName': 'Nazariy Luchkiv',
+
     'nav_about': 'About Me',
-    'nav_about_nether': 'About Nether',
+    'nav_about_nether': 'Hellish Greetings!', // Changed for navigation in Nether
     'nav_projects': 'Projects',
     'nav_contacts': 'Contacts',
     'nav_nether_details': 'Nether Details',
@@ -112,14 +105,19 @@ const Map<String, Map<String, String>> localizedStrings = {
     'about_text_p2': 'I love playing games and watching series. My favorite games are Red Dead Redemption 2, The Witcher 3: Wild Hunt, and The Last of Us. Among the series, I can highlight Breaking Bad, Better Call Saul, and The Sopranos.',
     'about_text_p3': 'In the future, I plan to study programming.',
     
-    'nether_about_title': 'ABOUT THE NETHER (Info from Wiki):',
-    'nether_about_p1': 'The Nether is a dangerous, hell-like dimension in Minecraft...',
-    'nether_about_p2': 'Here you can find Nether Fortresses...',
-    'nether_about_p3': 'Traveling to the Nether is always risky...',
-    'nether_details_title': 'The Nether Realm (Info from Wiki)',
+    'nether_intro_title': 'HELLISH GREETINGS!', // Changed for the title on the page
+    'nether_intro_p1': 'You dared to enter the Nether, a world of fire and shadows. Ordinary rules do not apply here, and every step could be your last.',
+    'nether_intro_p2': 'This dimension tests the bravest. Explore its secrets, but always be on guard!',
+    'nether_intro_p3': 'Perhaps here you will find what you are looking for... or your doom.',
+    
+    'nether_details_title': 'The Nether Realm',
+    'nether_about_p1': 'The Nether is a dangerous, hell-like dimension in Minecraft, filled with oceans of lava, fire, unique blocks, and hostile mobs.', // This text is now on NetherDetailsScreen
+    'nether_about_p2': 'Here you can find Nether Fortresses with valuable loot, Piglin Bastions, and resources such as Nether Quartz, Nether Gold Ore, Netherrack, and Ancient Debris for crafting Netherite gear.', // This text is now on NetherDetailsScreen
+    'nether_about_p3': 'Traveling to the Nether is always risky, but the rewards can be well worth the challenge!', // This text is now on NetherDetailsScreen
 
     'projects_title': 'MY PROJECTS:',
     'projects_wip_tag': '(IN PROGRESS)',
+    // ... (rest of English keys for projects, contacts, settings, achievements) ...
     'project_portfolio_title': 'Pixel Portfolio [Minecraft Style]',
     'project_portfolio_desc': 'My portfolio. This site was built with Flutter and inspired by the Minecraft style.',
     'project_portfolio_tech': 'Technologies: Flutter Web, Dart',
@@ -172,5 +170,6 @@ const Map<String, Map<String, String>> localizedStrings = {
 
 String tr(BuildContext context, String key) {
   final locale = languageNotifier.value;
+  // print('[DEBUG tr_function] Current language code: ${locale.languageCode}, For Key: "$key" -> Result: "${localizedStrings[locale.languageCode]?[key] ?? "KEY_NOT_FOUND"}"');
   return localizedStrings[locale.languageCode]?[key] ?? key;
 }
