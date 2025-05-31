@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../language_notifier.dart'; // Переконайся, що шлях до language_notifier.dart правильний
+// Виправлений відносний шлях до language_notifier.dart,
+// припускаючи, що language_notifier.dart лежить в папці lib/, 
+// а strings.dart - в lib/localization/
+import '../language_notifier.dart'; 
 
 const Map<String, Map<String, String>> localizedStrings = {
   'uk': {
@@ -8,11 +11,12 @@ const Map<String, Map<String, String>> localizedStrings = {
     
     // Навігація
     'nav_about': 'Про Мене',
-    'nav_about_nether': 'Пекельні Вітання!', // Змінено для кнопки навігації в Незері
+    'nav_about_nether': 'Пекельні Вітання!', 
     'nav_projects': 'Проєкти',
     'nav_contacts': 'Контакти',
-    'nav_nether_details': 'Деталі Незеру', // Для окремої сторінки деталей Незеру
+    'nav_nether_details': 'Деталі Незеру', 
     'nav_settings': 'Налаштування',
+    'nav_ghast_game': 'Битва з Гастом', // Для гри
 
     // Сторінка "Про мене" (звичайний світ)
     'play_button': 'PLAY (Classic)',
@@ -21,17 +25,17 @@ const Map<String, Map<String, String>> localizedStrings = {
     'about_text_p2': 'Я люблю грати в ігри та дивитися серіали. Мої улюблені ігри – це Red Dead Redemption 2, The Witcher 3: Wild Hunt та The Last of Us. Із серіалів можу виділити \'Пуститися берега\' (Breaking Bad), \'Краще подзвоніть Солу\' (Better Call Saul) та \'Клан Сопрано\' (The Sopranos).',
     'about_text_p3': 'У майбутньому я планую вивчати програмування.',
     
-    // Сторінка "Про мене" (в Незері - тепер вступний текст)
-    'nether_intro_title': 'ПЕКЕЛЬНІ ВІТАННЯ!', // Змінено для заголовка на сторінці
+    // Сторінка "Про мене" (в Незері - вступний текст)
+    'nether_intro_title': 'ПЕКЕЛЬНІ ВІТАННЯ!', 
     'nether_intro_p1': 'Ти насмілився увійти до Незеру, світу вогню та тіней. Тут звичайні правила не діють, а кожен крок може бути останнім.',
     'nether_intro_p2': 'Цей вимір випробовує найсміливіших. Досліджуй його таємниці, але будь завжди напоготові!',
     'nether_intro_p3': 'Можливо, саме тут ти знайдеш те, що шукаєш... або свою загибель.',
     
-    // Сторінка "Деталі Незеру" (використовує старі ключі з описом Незеру)
+    // Сторінка "Деталі Незеру"
     'nether_details_title': 'Світ Незеру', 
-    'nether_about_p1': 'Незер – це небезпечний, схожий на пекло вимір у Minecraft, наповнений океанами лави, вогнем, унікальними блоками та ворожими мобами.', // Цей текст тепер на NetherDetailsScreen
-    'nether_about_p2': 'Тут можна знайти фортеці Незера з цінними скарбами, бастіони піглінів, а також ресурси, такі як кварц, незер-золото, незерак та стародавні уламки для створення незеритового спорядження.', // Цей текст тепер на NetherDetailsScreen
-    'nether_about_p3': 'Подорож у Незер завжди ризикована, але нагороди можуть бути вартими того!', // Цей текст тепер на NetherDetailsScreen
+    'nether_about_p1': 'Незер – це небезпечний, схожий на пекло вимір у Minecraft, наповнений океанами лави, вогнем, унікальними блоками та ворожими мобами.',
+    'nether_about_p2': 'Тут можна знайти фортеці Незера з цінними скарбами, бастіони піглінів, а також ресурси, такі як кварц, незер-золото, незерак та стародавні уламки для створення незеритового спорядження.',
+    'nether_about_p3': 'Подорож у Незер завжди ризикована, але нагороди можуть бути вартими того!',
 
     // Сторінка "Проекти"
     'projects_title': 'МОЇ ПРОЄКТИ:',
@@ -62,7 +66,7 @@ const Map<String, Map<String, String>> localizedStrings = {
     'theme_action_activate_night': 'Нічний режим', 
     'theme_action_activate_day': 'Денний режим',   
     'theme_action_exit_nether': 'Покинути Незер', 
-    'settings_action_enter_nether': 'Портал в Незер', // Для кнопки порталу на AboutScreen / Tooltip
+    'settings_action_enter_nether': 'Портал в Незер', 
     'settings_lang_switch': 'Переключити на English',
     'settings_lang_current': 'Поточна мова:',
     
@@ -79,25 +83,38 @@ const Map<String, Map<String, String>> localizedStrings = {
     'ach_switch_theme_desc': 'Володар Світла і Темряви!',
     'ach_switch_language_desc': 'Поліглот!',
     'ach_survived_creeper_desc': 'Та ти везунчик!',
-    'ach_nether_portal_opened_desc': 'Ворота Відкрито!', // Це досягнення все ще актуальне
+    'ach_nether_portal_opened_desc': 'Ворота Відкрито!',
 
     // Екран "Ти помер"
     'you_died_text': 'ВИ ЗАГИНУЛИ!',
     'respawn_button_text': 'ВІДРОДИТИСЯ',
     'title_screen_button_text': 'ГОЛОВНЕ МЕНЮ',
-    'score_text': 'Рахунок: ', // Можливо, знадобиться для майбутніх ігор
+    'score_text': 'Рахунок: ', 
     'xp_label': 'Досвід:',
+
+    // Ключі для гри з Гастом
+    'ghast_game_title': 'Відбий Атаку Гаста!',
+    'ghast_game_score': 'Рахунок: ',
+    'ghast_game_lives': 'Життя: ', 
+    'ghast_game_start_button': 'Почати Гру',
+    'ghast_game_restart_button': 'Грати Знову',
+    'ghast_game_gg': 'Гаста Переможено!', 
+    'ghast_game_over': 'Гру Закінчено!', 
+    'ghast_game_instructions': 'Клікай по фаєрболах, щоб відбити їх назад у Гаста!',
+    'ghast_game_reflected': 'Відбито!', 
+    'ghast_hit': 'Влучив!',         
   },
   'en': {
     'portfolioTitle': 'Nazariy Luchkiv Portfolio',
     'playerName': 'Nazariy Luchkiv',
 
     'nav_about': 'About Me',
-    'nav_about_nether': 'Hellish Greetings!', // Changed for navigation in Nether
+    'nav_about_nether': 'Hellish Greetings!', 
     'nav_projects': 'Projects',
     'nav_contacts': 'Contacts',
     'nav_nether_details': 'Nether Details',
     'nav_settings': 'Settings',
+    'nav_ghast_game': 'Ghast Battle',
 
     'play_button': 'PLAY (Classic)',
     'about_title': 'ABOUT ME:',
@@ -105,19 +122,18 @@ const Map<String, Map<String, String>> localizedStrings = {
     'about_text_p2': 'I love playing games and watching series. My favorite games are Red Dead Redemption 2, The Witcher 3: Wild Hunt, and The Last of Us. Among the series, I can highlight Breaking Bad, Better Call Saul, and The Sopranos.',
     'about_text_p3': 'In the future, I plan to study programming.',
     
-    'nether_intro_title': 'HELLISH GREETINGS!', // Changed for the title on the page
+    'nether_intro_title': 'HELLISH GREETINGS!', 
     'nether_intro_p1': 'You dared to enter the Nether, a world of fire and shadows. Ordinary rules do not apply here, and every step could be your last.',
     'nether_intro_p2': 'This dimension tests the bravest. Explore its secrets, but always be on guard!',
     'nether_intro_p3': 'Perhaps here you will find what you are looking for... or your doom.',
-    
+
     'nether_details_title': 'The Nether Realm',
-    'nether_about_p1': 'The Nether is a dangerous, hell-like dimension in Minecraft, filled with oceans of lava, fire, unique blocks, and hostile mobs.', // This text is now on NetherDetailsScreen
-    'nether_about_p2': 'Here you can find Nether Fortresses with valuable loot, Piglin Bastions, and resources such as Nether Quartz, Nether Gold Ore, Netherrack, and Ancient Debris for crafting Netherite gear.', // This text is now on NetherDetailsScreen
-    'nether_about_p3': 'Traveling to the Nether is always risky, but the rewards can be well worth the challenge!', // This text is now on NetherDetailsScreen
+    'nether_about_p1': 'The Nether is a dangerous, hell-like dimension in Minecraft, filled with oceans of lava, fire, unique blocks, and hostile mobs.',
+    'nether_about_p2': 'Here you can find Nether Fortresses with valuable loot, Piglin Bastions, and resources such as Nether Quartz, Nether Gold Ore, Netherrack, and Ancient Debris for crafting Netherite gear.',
+    'nether_about_p3': 'Traveling to the Nether is always risky, but the rewards can be well worth the challenge!',
 
     'projects_title': 'MY PROJECTS:',
     'projects_wip_tag': '(IN PROGRESS)',
-    // ... (rest of English keys for projects, contacts, settings, achievements) ...
     'project_portfolio_title': 'Pixel Portfolio [Minecraft Style]',
     'project_portfolio_desc': 'My portfolio. This site was built with Flutter and inspired by the Minecraft style.',
     'project_portfolio_tech': 'Technologies: Flutter Web, Dart',
@@ -165,11 +181,23 @@ const Map<String, Map<String, String>> localizedStrings = {
     'title_screen_button_text': 'TITLE SCREEN',
     'score_text': 'Score: ',
     'xp_label': 'Experience:',
+
+    // Keys for Ghast Game
+    'ghast_game_title': 'Reflect the Ghast Attack!',
+    'ghast_game_score': 'Score: ',
+    'ghast_game_lives': 'Lives: ', 
+    'ghast_game_start_button': 'Start Game',
+    'ghast_game_restart_button': 'Play Again',
+    'ghast_game_gg': 'Ghast Defeated!',    
+    'ghast_game_over': 'Game Over!',       
+    'ghast_game_instructions': 'Click on the fireballs to reflect them back at the Ghast!',
+    'ghast_game_reflected': 'Reflected!',  
+    'ghast_hit': 'Hit!',          
   },
 };
 
 String tr(BuildContext context, String key) {
-  final locale = languageNotifier.value;
+  final locale = languageNotifier.value; // Тепер languageNotifier має бути доступний
   // print('[DEBUG tr_function] Current language code: ${locale.languageCode}, For Key: "$key" -> Result: "${localizedStrings[locale.languageCode]?[key] ?? "KEY_NOT_FOUND"}"');
   return localizedStrings[locale.languageCode]?[key] ?? key;
 }

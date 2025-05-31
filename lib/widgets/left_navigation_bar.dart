@@ -4,6 +4,7 @@ import 'settings_bottom_sheet.dart';
 import '../localization/strings.dart';
 import '../achievement_manager.dart';
 import 'creeper_explosion_effect.dart';
+// import 'portal_animation_overlay.dart'; // Якщо не використовується тут
 import '../theme_notifier.dart';
 
 class LeftNavigationBar extends StatefulWidget {
@@ -124,21 +125,24 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
         NavItem(
           icon: Icons.explore_outlined, 
           titleKey: 'nav_nether_details', 
-          isSelected: widget.selectedIndex == 2, 
+          isSelected: widget.selectedIndex == 2, // Використовуємо індекс 2 для "Деталей Незеру"
           onTap: () => widget.onItemTapped(2),
         ),
       );
     }
     
-    // Пункт "Minecraft Вікі" (індекс 3) ВИДАЛЕНО
-    // navItems.add(
-    //   NavItem(
-    //     icon: Icons.menu_book_outlined,
-    //     titleKey: 'nav_wiki',
-    //     isSelected: widget.selectedIndex == 3,
-    //     onTap: () => widget.onItemTapped(3),
-    //   ),
-    // );
+    // Новий пункт "Битва з Гастом" (буде мати індекс 3)
+    navItems.add(
+      NavItem(
+        icon: Icons.whatshot, // Іконка вогню або ігрового контролера
+        titleKey: 'nav_ghast_game', // Ключ локалізації, який ми додали
+        isSelected: widget.selectedIndex == 3,
+        onTap: () {
+          // AchievementManager.show(context, 'played_ghast_game'); // Можна додати нову ачівку
+          widget.onItemTapped(3);
+        },
+      ),
+    );
 
     return Container(
       width: 260,
@@ -164,7 +168,7 @@ class _LeftNavigationBarState extends State<LeftNavigationBar> {
             ),
           ),
           Divider(color: theme.dividerColor, height: 1),
-          ...navItems,
+          ...navItems, // Розгортаємо список навігаційних елементів
           const Spacer(),
           Divider(color: theme.dividerColor, height: 1),
           Material(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../localization/strings.dart';
+import '../localization/strings.dart'; // Переконайся, що шлях правильний
 
 class NavItem extends StatelessWidget {
   final IconData icon;
@@ -39,9 +39,14 @@ class NavItem extends StatelessWidget {
             children: [
               Icon(icon, color: theme.iconTheme.color, size: 20),
               const SizedBox(width: 15),
-              Text(
-                tr(context, titleKey),
-                style: theme.textTheme.bodyLarge?.copyWith(fontSize: 10),
+              // Обгортаємо Text у Expanded, щоб він міг переносити довгий текст
+              Expanded(
+                child: Text(
+                  tr(context, titleKey),
+                  style: theme.textTheme.bodyLarge?.copyWith(fontSize: 10),
+                  // softWrap: true, // Це значення за замовчуванням, дозволяє перенос тексту
+                  // overflow: TextOverflow.ellipsis, // Якщо хочеш "..." для дуже довгого тексту
+                ),
               ),
             ],
           ),
